@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	initlog "log"
 	"os"
 	"os/signal"
@@ -9,6 +10,7 @@ import (
 	"rs-drop-emulator/beasts"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 )
 
@@ -21,11 +23,15 @@ var (
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		"vindicta": beasts.Vindicta,
 	}
+	botToken string
 )
 
 func init() {
 	configLogger()
 	beasts.ConfigLogger(log)
+
+	godotenv.Load()
+	botToken = os.Getenv("DISCORD_BOT_TOKEN")
 
 	discord = createBot()
 	discord.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
@@ -63,7 +69,7 @@ func configLogger() {
 // Creates and returns a new discord session
 func createBot() *discordgo.Session {
 	// Create new session
-	discord, err := discordgo.New("Bot OTMxNTY3NDM3NDM3MDc1NDk2.YeGTyA.zest5CGJR7HHWqL6RtkNjMHG2sA")
+	discord, err := discordgo.New(fmt.Sprintf("Bot %v", botToken))
 	if err != nil {
 		log.Fatalf("couldn't set up bot; %v", err)
 	}

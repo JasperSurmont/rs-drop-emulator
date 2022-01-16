@@ -96,7 +96,7 @@ var (
 	}
 )
 
-var VindictaCommand *discordgo.ApplicationCommand = &discordgo.ApplicationCommand{
+var VindictaCommand = &discordgo.ApplicationCommand{
 	Name:        "vindicta",
 	Description: "Emulate a vindicta drop with full reputation",
 	Options: []*discordgo.ApplicationCommandOption{

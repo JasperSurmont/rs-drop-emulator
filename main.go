@@ -8,6 +8,8 @@ import (
 	"syscall"
 
 	"rs-drop-emulator/beasts"
+	"rs-drop-emulator/general"
+	"rs-drop-emulator/util"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
@@ -20,10 +22,12 @@ var (
 	commands = []*discordgo.ApplicationCommand{
 		beasts.VindictaCommand,
 		beasts.HelwyrCommand,
+		general.HelpCommand,
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		"vindicta": beasts.Vindicta,
 		"helwyr":   beasts.Helwyr,
+		"help":     general.Help,
 	}
 	botToken string
 )
@@ -31,6 +35,8 @@ var (
 func init() {
 	configLogger()
 	beasts.ConfigLogger(log)
+	general.ConfigLogger(log)
+	util.ConfigLogger(log)
 
 	godotenv.Load()
 	botToken = os.Getenv("DISCORD_BOT_TOKEN")

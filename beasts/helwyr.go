@@ -104,7 +104,7 @@ var (
 	}
 )
 
-var HelwyrCommand *discordgo.ApplicationCommand = &discordgo.ApplicationCommand{
+var HelwyrCommand = &discordgo.ApplicationCommand{
 	Name:        "helwyr",
 	Description: "Emulate a helwyr drop with full reputation",
 	Options: []*discordgo.ApplicationCommandOption{

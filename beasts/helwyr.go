@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	vindictaCommonDroptable = []Drop{
+	helwyrCommonDroptable = []Drop{
 		{
 			Name:        "Drakolith stone spirit",
 			AmountRange: [2]int{15, 25},
@@ -18,21 +18,25 @@ var (
 		},
 		{
 			Name:        "Uncut diamond",
-			AmountRange: [2]int{18, 22},
+			AmountRange: [2]int{20, 30},
 		},
 		{
 			Name:        "Grimy dwarf weed",
-			AmountRange: [2]int{14, 25},
+			AmountRange: [2]int{20, 30},
 		},
 		{
 			Name:        "Raw shark",
-			AmountRange: [2]int{45, 55},
+			AmountRange: [2]int{45, 60},
 		},
 	}
 
-	vindictaUncommonDroptable = []Drop{
+	helwyrUncommonDroptable = []Drop{
 		{
 			Name:        "Phasmatite stone spirit",
+			AmountRange: [2]int{15, 25},
+		},
+		{
+			Name:        "Necrite stone spirit",
 			AmountRange: [2]int{15, 25},
 		},
 		{
@@ -45,60 +49,64 @@ var (
 		},
 		{
 			Name:        "Magic logs",
-			AmountRange: [2]int{150, 250},
+			AmountRange: [2]int{175, 350},
 		},
 		{
-			Name:        "Large plated rune salvage",
-			AmountRange: [2]int{8, 15},
+			Name:        "Large bladed rune salvage",
+			AmountRange: [2]int{10, 20},
 		},
 		{
-			Name:        "Dragon bones",
-			AmountRange: [2]int{150, 250},
+			Name:        "Crystal key",
+			AmountRange: [2]int{2, 4},
 		},
 		{
-			Name:        "Black dragonhide",
-			AmountRange: [2]int{25, 44},
+			Name:        "Grimy lantadyme",
+			AmountRange: [2]int{90, 120},
 		},
 	}
 
-	vindictaRareDroptable = []Drop{
+	helwyrRareDroptable = []Drop{
 		{
-			Rate: 1.0 / 256.0,
+			Rate: 1.0 / 179.0,
 			Name: "Dormant anima core helm",
 		},
 		{
-			Rate: 1.0 / 256.0,
+			Rate: 1.0 / 179.0,
 			Name: "Dormant anima core body",
 		},
 		{
-			Rate: 1.0 / 256.0,
+			Rate: 1.0 / 179.0,
 			Name: "Dormant anima core legs",
 		},
 		{
-			Rate: 1.0 / 256.0,
-			Name: "Dragon rider lance",
+			Rate: 1.0 / 179.0,
+			Name: "Orb of the Cywir elders",
 		},
 		{
-			Rate: 1.0 / 256.0,
-			Name: "Crest of Zaros",
+			Rate: 1.0 / 179.0,
+			Name: "Crest of Seren",
 		},
 		{
-			Rate: 1.0 / 256.0,
-			Name: "Zarosian essence",
+			Rate: 1.0 / 179.0,
+			Name: "Wand of the Cywir elders",
+		},
+		{
+			Rate: 1.0 / 179.0,
+			Name: "Serenic essence",
 		},
 	}
 
-	vindictaAlwaysDroptable = []Drop{
+	helwyrAlwaysDroptable = []Drop{
 		{
-			Name:   "Dragon bones",
+			Name:   "Bones",
 			Amount: 1,
 		},
 	}
 )
 
-var VindictaCommand *discordgo.ApplicationCommand = &discordgo.ApplicationCommand{
-	Name:        "vindicta",
-	Description: "Emulate a vindicta drop with full reputation",
+var HelwyrCommand *discordgo.ApplicationCommand = &discordgo.ApplicationCommand{
+	Name:        "helwyr",
+	Description: "Emulate a helwyr drop with full reputation",
 	Options: []*discordgo.ApplicationCommandOption{
 		{
 			Type:        discordgo.ApplicationCommandOptionInteger,
@@ -115,7 +123,7 @@ var VindictaCommand *discordgo.ApplicationCommand = &discordgo.ApplicationComman
 	},
 }
 
-func Vindicta(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func Helwyr(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	var amount int64 = 1
 	if opt0 := i.ApplicationCommandData().Options[0]; opt0 != nil {
 		amount = opt0.IntValue()
@@ -132,10 +140,10 @@ func Vindicta(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	drops := EmulateDrop(commonRateWithoutRare, amount, vindictaRareDroptable, vindictaUncommonDroptable, vindictaCommonDroptable)
+	drops := EmulateDrop(commonRateWithoutRare, amount, helwyrRareDroptable, helwyrUncommonDroptable, helwyrCommonDroptable)
 
 	if opt1 := i.ApplicationCommandData().Options[1]; opt1 == nil || opt1.BoolValue() {
-		AddAlwaysDroptable(amount, &drops, vindictaAlwaysDroptable)
+		AddAlwaysDroptable(amount, &drops, helwyrAlwaysDroptable)
 	}
 
 	content := "You got:\n"

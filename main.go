@@ -7,9 +7,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"rs-drop-emulator/beasts"
 	"rs-drop-emulator/general"
-	"rs-drop-emulator/util"
+	"rs-drop-emulator/runescape/beasts"
+	"rs-drop-emulator/runescape/util"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
@@ -34,9 +34,9 @@ var (
 
 func init() {
 	configLogger()
-	beasts.ConfigLogger(log)
-	general.ConfigLogger(log)
-	util.ConfigLogger(log)
+	beasts.ConfigLogger()
+	general.ConfigLogger()
+	util.ConfigLogger()
 
 	godotenv.Load()
 	botToken = os.Getenv("DISCORD_BOT_TOKEN")
@@ -102,4 +102,5 @@ func configLogger() {
 	}
 
 	log = logger.Sugar().Named("main")
+	zap.ReplaceGlobals(logger)
 }

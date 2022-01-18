@@ -2,6 +2,7 @@ package beasts
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/bwmarrin/discordgo"
 )
@@ -117,8 +118,8 @@ var VindictaCommand = &discordgo.ApplicationCommand{
 
 func Vindicta(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	var amount int64 = 1
-	if opt0 := i.ApplicationCommandData().Options[0]; opt0 != nil {
-		amount = opt0.IntValue()
+	if lenOpt := len(i.ApplicationCommandData().Options); lenOpt >= 1 {
+		amount = i.ApplicationCommandData().Options[0].IntValue()
 	}
 
 	// Replace this with max value later
@@ -134,19 +135,29 @@ func Vindicta(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	drops := EmulateDrop(commonRateWithoutRare, amount, vindictaRareDroptable, vindictaUncommonDroptable, vindictaCommonDroptable)
 
-	if opt1 := i.ApplicationCommandData().Options[1]; opt1 == nil || opt1.BoolValue() {
+	if lenOpt := len(i.ApplicationCommandData().Options); lenOpt < 2 || i.ApplicationCommandData().Options[1].BoolValue() {
 		AddAlwaysDroptable(amount, &drops, vindictaAlwaysDroptable)
 	}
 
+	dropWithPrice, ok := AmountToPrice(drops)
+	if !ok {
+		// Add content saying it's incomplete
+	}
+
+	sort.Slice(dropWithPrice, func(i, j int) bool {
+		comp, _ := dropWithPrice[i].price.Compare(dropWithPrice[j].price)
+		return comp == 1
+	})
+
 	content := "You got:\n"
-	for _, d := range drops {
-		content += fmt.Sprintf("%v %v\n", d.Amount, d.Name)
+	for _, d := range dropWithPrice {
+		content += fmt.Sprintf("%v %v: %v gp\n", drops[d.name].Amount, d.name, d.price)
 	}
 
 	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
-			Content: fmt.Sprintf(content),
+			Content: content,
 		},
 	})
 }

@@ -2,6 +2,7 @@ package beasts
 
 import (
 	"math/rand"
+	"rs-drop-emulator/runescape/util"
 )
 
 const (
@@ -71,3 +72,27 @@ func AddAlwaysDroptable(amount int64, drops *map[string]*Drop, alwaysDroptable [
 		}
 	}
 }
+
+func AmountToPrice(drops map[string]*Drop) (res []namedRSPrice, ok bool) {
+	ok = true
+	for _, d := range drops {
+		price, err := util.GetItemPrice(d.Name)
+		if err != nil {
+			ok = false
+			continue
+		}
+
+		err = price.Multiply(d.Amount)
+		if err != nil {
+			ok = false
+			continue
+		}
+		res = append(res, namedRSPrice{
+			name:  d.Name,
+			price: price,
+		})
+	}
+	return
+}
+
+func SortDrops(m map[string]util.RSPrice) {}

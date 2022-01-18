@@ -8,8 +8,8 @@ import (
 )
 
 var (
-	helwyrUrl             = "https://runescape.wiki/images/Helwyr.png?8740d"
-	helwyrCommonDroptable = []core.Drop{
+	twinfuriesUrl             = "https://runescape.wiki/images/Nymora%2C_the_Vengeful.png?230f1"
+	twinfuriesCommonDroptable = []core.Drop{
 		{
 			Name:        "Drakolith stone spirit",
 			AmountRange: [2]int{15, 25},
@@ -20,19 +20,19 @@ var (
 		},
 		{
 			Name:        "Uncut diamond",
-			AmountRange: [2]int{20, 30},
+			AmountRange: [2]int{18, 22},
 		},
 		{
 			Name:        "Grimy dwarf weed",
-			AmountRange: [2]int{20, 30},
+			AmountRange: [2]int{14, 25},
 		},
 		{
 			Name:        "Raw shark",
-			AmountRange: [2]int{45, 60},
+			AmountRange: [2]int{45, 55},
 		},
 	}
 
-	helwyrUncommonDroptable = []core.Drop{
+	twinfuriesUncommonDroptable = []core.Drop{
 		{
 			Name:        "Phasmatite stone spirit",
 			AmountRange: [2]int{15, 25},
@@ -51,71 +51,66 @@ var (
 		},
 		{
 			Name:        "Magic logs",
-			AmountRange: [2]int{175, 350},
+			AmountRange: [2]int{150, 250},
 		},
 		{
 			Name:        "Large bladed rune salvage",
-			AmountRange: [2]int{10, 20},
+			AmountRange: [2]int{5, 10},
 		},
 		{
-			Name:        "Crystal key",
-			AmountRange: [2]int{2, 4},
+			Name:        "Wine of Zamorak",
+			AmountRange: [2]int{18, 22},
 		},
 		{
-			Name:        "Grimy lantadyme",
-			AmountRange: [2]int{90, 120},
+			Name:        "Infernal ashes",
+			AmountRange: [2]int{150, 249},
 		},
 	}
 
-	helwyrRareDroptable = []core.Drop{
+	twinfuriesRareDroptable = []core.Drop{
 		{
-			Rate: 1.0 / 179.0,
+			Rate: 1.0 / 256.0,
 			Name: "Dormant anima core helm",
 			Bold: true,
 		},
 		{
-			Rate: 1.0 / 179.0,
+			Rate: 1.0 / 256.0,
 			Name: "Dormant anima core body",
 			Bold: true,
 		},
 		{
-			Rate: 1.0 / 179.0,
+			Rate: 1.0 / 256.0,
 			Name: "Dormant anima core legs",
 			Bold: true,
 		},
 		{
-			Rate: 1.0 / 179.0,
+			Rate: 1.0 / 256.0,
 			Name: "Orb of the Cywir elders",
 			Bold: true,
 		},
 		{
-			Rate: 1.0 / 179.0,
-			Name: "Crest of Seren",
+			Rate: 1.0 / 256.0,
+			Name: "Blade of Avaryss",
 			Bold: true,
 		},
 		{
-			Rate: 1.0 / 179.0,
-			Name: "Wand of the Cywir elders",
+			Rate: 1.0 / 256.0,
+			Name: "Blade of Nymora",
 			Bold: true,
 		},
 		{
-			Rate: 1.0 / 179.0,
-			Name: "Serenic essence",
+			Rate: 1.0 / 64.0,
+			Name: "Zamorakian essence",
 			Bold: true,
 		},
 	}
 
-	helwyrAlwaysDroptable = []core.Drop{
-		{
-			Name:   "Bones",
-			Amount: 1,
-		},
-	}
+	twinfuriesAlwaysDroptable = []core.Drop{}
 )
 
-var HelwyrCommand = &discordgo.ApplicationCommand{
-	Name:        "helwyr",
-	Description: "Emulate a helwyr drop with full reputation",
+var TwinfuriesCommand = &discordgo.ApplicationCommand{
+	Name:        "twinfuries",
+	Description: "Emulate a Twin Furies drop with full reputation",
 	Options: []*discordgo.ApplicationCommandOption{
 		{
 			Type:        discordgo.ApplicationCommandOptionInteger,
@@ -132,7 +127,7 @@ var HelwyrCommand = &discordgo.ApplicationCommand{
 	},
 }
 
-func Helwyr(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func Twinfuries(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	var amount int64 = 1
 	if lenOpt := len(i.ApplicationCommandData().Options); lenOpt >= 1 {
 		amount = i.ApplicationCommandData().Options[0].IntValue()
@@ -149,9 +144,9 @@ func Helwyr(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	drops := core.EmulateDropGwd2(core.CommonRateWithoutRare, amount, helwyrRareDroptable, helwyrUncommonDroptable, helwyrCommonDroptable)
+	drops := core.EmulateDropGwd2(core.CommonRateWithoutRare, amount, twinfuriesRareDroptable, twinfuriesUncommonDroptable, twinfuriesCommonDroptable)
 	if lenOpt := len(i.ApplicationCommandData().Options); lenOpt < 2 || i.ApplicationCommandData().Options[1].BoolValue() {
-		core.AddAlwaysDroptable(amount, &drops, helwyrAlwaysDroptable)
+		core.AddAlwaysDroptable(amount, &drops, twinfuriesAlwaysDroptable)
 	}
 
 	dropWithPrice, total, ok := core.AmountToPrice(drops)
@@ -160,9 +155,9 @@ func Helwyr(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	embed := discordgo.MessageEmbed{
 		Thumbnail: &discordgo.MessageEmbedThumbnail{
-			URL: helwyrUrl,
+			URL: twinfuriesUrl,
 		},
-		Title:       fmt.Sprintf("You killed helwyr %v times and you got:", amount),
+		Title:       fmt.Sprintf("You killed the Twin Furies %v times and you got:", amount),
 		Description: content,
 	}
 

@@ -2,14 +2,15 @@ package beasts
 
 import (
 	"fmt"
+
 	"rs-drop-emulator/runescape/core"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 var (
-	helwyrUrl             = "https://runescape.wiki/images/Helwyr.png?8740d"
-	helwyrCommonDroptable = []core.Drop{
+	gregorovicUrl             = "https://runescape.wiki/images/Gregorovic.png?d97e5"
+	gregorovicCommonDroptable = []core.Drop{
 		{
 			Name:        "Drakolith stone spirit",
 			AmountRange: [2]int{15, 25},
@@ -20,19 +21,19 @@ var (
 		},
 		{
 			Name:        "Uncut diamond",
-			AmountRange: [2]int{20, 30},
+			AmountRange: [2]int{18, 22},
 		},
 		{
 			Name:        "Grimy dwarf weed",
-			AmountRange: [2]int{20, 30},
+			AmountRange: [2]int{14, 25},
 		},
 		{
 			Name:        "Raw shark",
-			AmountRange: [2]int{45, 60},
+			AmountRange: [2]int{45, 55},
 		},
 	}
 
-	helwyrUncommonDroptable = []core.Drop{
+	gregorovicUncommonDroptable = []core.Drop{
 		{
 			Name:        "Phasmatite stone spirit",
 			AmountRange: [2]int{15, 25},
@@ -51,71 +52,66 @@ var (
 		},
 		{
 			Name:        "Magic logs",
-			AmountRange: [2]int{175, 350},
+			AmountRange: [2]int{150, 250},
 		},
 		{
 			Name:        "Large bladed rune salvage",
-			AmountRange: [2]int{10, 20},
+			AmountRange: [2]int{5, 10},
 		},
 		{
-			Name:        "Crystal key",
-			AmountRange: [2]int{2, 4},
+			Name:        "Medium plated rune salvage",
+			AmountRange: [2]int{5, 10},
 		},
 		{
-			Name:        "Grimy lantadyme",
-			AmountRange: [2]int{90, 120},
+			Name:        "Battlestaff",
+			AmountRange: [2]int{45, 60},
 		},
 	}
 
-	helwyrRareDroptable = []core.Drop{
+	gregorovicRareDroptable = []core.Drop{
 		{
-			Rate: 1.0 / 179.0,
+			Rate: 1.0 / 256.0,
 			Name: "Dormant anima core helm",
 			Bold: true,
 		},
 		{
-			Rate: 1.0 / 179.0,
+			Rate: 1.0 / 256.0,
 			Name: "Dormant anima core body",
 			Bold: true,
 		},
 		{
-			Rate: 1.0 / 179.0,
+			Rate: 1.0 / 256.0,
 			Name: "Dormant anima core legs",
 			Bold: true,
 		},
 		{
-			Rate: 1.0 / 179.0,
-			Name: "Orb of the Cywir elders",
+			Rate: 1.0 / 256.0,
+			Name: "Shadow glaive",
 			Bold: true,
 		},
 		{
-			Rate: 1.0 / 179.0,
-			Name: "Crest of Seren",
+			Rate: 1.0 / 256.0,
+			Name: "Off-hand shadow glaive",
 			Bold: true,
 		},
 		{
-			Rate: 1.0 / 179.0,
-			Name: "Wand of the Cywir elders",
+			Rate: 1.0 / 256.0,
+			Name: "Crest of Sliske",
 			Bold: true,
 		},
 		{
-			Rate: 1.0 / 179.0,
-			Name: "Serenic essence",
+			Rate: 1.0 / 64.0,
+			Name: "Sliskean essence",
 			Bold: true,
 		},
 	}
 
-	helwyrAlwaysDroptable = []core.Drop{
-		{
-			Name:   "Bones",
-			Amount: 1,
-		},
-	}
+	gregorovicAlwaysDroptable = []core.Drop{}
 )
 
-var HelwyrCommand = &discordgo.ApplicationCommand{
-	Name:        "helwyr",
-	Description: "Emulate a helwyr drop with full reputation",
+var GregorovicCommand = &discordgo.ApplicationCommand{
+	Name:        "gregorovic",
+	Description: "Emulate a Gregorovic drop with full reputation",
 	Options: []*discordgo.ApplicationCommandOption{
 		{
 			Type:        discordgo.ApplicationCommandOptionInteger,
@@ -132,7 +128,7 @@ var HelwyrCommand = &discordgo.ApplicationCommand{
 	},
 }
 
-func Helwyr(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func Gregorovic(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	var amount int64 = 1
 	if lenOpt := len(i.ApplicationCommandData().Options); lenOpt >= 1 {
 		amount = i.ApplicationCommandData().Options[0].IntValue()
@@ -149,9 +145,9 @@ func Helwyr(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	drops := core.EmulateDropGwd2(core.CommonRateWithoutRare, amount, helwyrRareDroptable, helwyrUncommonDroptable, helwyrCommonDroptable)
+	drops := core.EmulateDropGwd2(core.CommonRateWithoutRare, amount, gregorovicRareDroptable, gregorovicUncommonDroptable, gregorovicCommonDroptable)
 	if lenOpt := len(i.ApplicationCommandData().Options); lenOpt < 2 || i.ApplicationCommandData().Options[1].BoolValue() {
-		core.AddAlwaysDroptable(amount, &drops, helwyrAlwaysDroptable)
+		core.AddAlwaysDroptable(amount, &drops, gregorovicAlwaysDroptable)
 	}
 
 	dropWithPrice, total, ok := core.AmountToPrice(drops)
@@ -160,9 +156,9 @@ func Helwyr(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	embed := discordgo.MessageEmbed{
 		Thumbnail: &discordgo.MessageEmbedThumbnail{
-			URL: helwyrUrl,
+			URL: gregorovicUrl,
 		},
-		Title:       fmt.Sprintf("You killed helwyr %v times and you got:", amount),
+		Title:       fmt.Sprintf("You killed Gregorovic %v times and you got:", amount),
 		Description: content,
 	}
 

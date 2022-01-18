@@ -2,13 +2,14 @@ package beasts
 
 import (
 	"fmt"
+	"rs-drop-emulator/runescape/core"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 var (
 	vindictaUrl             = "https://runescape.wiki/images/Vindicta.png?41b58"
-	vindictaCommonDroptable = []Drop{
+	vindictaCommonDroptable = []core.Drop{
 		{
 			Name:        "Drakolith stone spirit",
 			AmountRange: [2]int{15, 25},
@@ -31,7 +32,7 @@ var (
 		},
 	}
 
-	vindictaUncommonDroptable = []Drop{
+	vindictaUncommonDroptable = []core.Drop{
 		{
 			Name:        "Phasmatite stone spirit",
 			AmountRange: [2]int{15, 25},
@@ -62,7 +63,7 @@ var (
 		},
 	}
 
-	vindictaRareDroptable = []Drop{
+	vindictaRareDroptable = []core.Drop{
 		{
 			Rate: 1.0 / 256.0,
 			Name: "Dormant anima core helm",
@@ -95,7 +96,7 @@ var (
 		},
 	}
 
-	vindictaAlwaysDroptable = []Drop{
+	vindictaAlwaysDroptable = []core.Drop{
 		{
 			Name:   "Dragon bones",
 			Amount: 1,
@@ -139,14 +140,14 @@ func Vindicta(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	drops := EmulateDrop(commonRateWithoutRare, amount, vindictaRareDroptable, vindictaUncommonDroptable, vindictaCommonDroptable)
+	drops := core.EmulateDropGwd2(core.CommonRateWithoutRare, amount, vindictaRareDroptable, vindictaUncommonDroptable, vindictaCommonDroptable)
 	if lenOpt := len(i.ApplicationCommandData().Options); lenOpt < 2 || i.ApplicationCommandData().Options[1].BoolValue() {
-		AddAlwaysDroptable(amount, &drops, vindictaAlwaysDroptable)
+		core.AddAlwaysDroptable(amount, &drops, vindictaAlwaysDroptable)
 	}
 
-	dropWithPrice, total, ok := AmountToPrice(drops)
-	SortDrops(&dropWithPrice)
-	content := makeDropList(dropWithPrice, drops, total, ok)
+	dropWithPrice, total, ok := core.AmountToPrice(drops)
+	core.SortDrops(&dropWithPrice)
+	content := core.MakeDropList(dropWithPrice, drops, total, ok)
 
 	embed := discordgo.MessageEmbed{
 		Thumbnail: &discordgo.MessageEmbedThumbnail{

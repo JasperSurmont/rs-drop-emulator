@@ -2,19 +2,19 @@ package beasts
 
 import (
 	"fmt"
-	"sort"
 
 	"github.com/bwmarrin/discordgo"
 )
 
 var (
+	vindictaUrl             = "https://runescape.wiki/images/Vindicta.png?41b58"
 	vindictaCommonDroptable = []Drop{
 		{
 			Name:        "Drakolith stone spirit",
 			AmountRange: [2]int{15, 25},
 		},
 		{
-			Name:        "Oricalcite stone spirit",
+			Name:        "Orichalcite stone spirit",
 			AmountRange: [2]int{15, 25},
 		},
 		{
@@ -66,26 +66,32 @@ var (
 		{
 			Rate: 1.0 / 256.0,
 			Name: "Dormant anima core helm",
+			Bold: true,
 		},
 		{
 			Rate: 1.0 / 256.0,
 			Name: "Dormant anima core body",
+			Bold: true,
 		},
 		{
 			Rate: 1.0 / 256.0,
 			Name: "Dormant anima core legs",
+			Bold: true,
 		},
 		{
 			Rate: 1.0 / 256.0,
-			Name: "Dragon rider lance",
+			Name: "Dragon Rider lance",
+			Bold: true,
 		},
 		{
 			Rate: 1.0 / 256.0,
 			Name: "Crest of Zaros",
+			Bold: true,
 		},
 		{
 			Rate: 1.0 / 256.0,
 			Name: "Zarosian essence",
+			Bold: true,
 		},
 	}
 
@@ -127,37 +133,33 @@ func Vindicta(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
-				Content: fmt.Sprintf("The maximum amount has to be between 1 and %v", MAX_AMOUNT_ROLLS),
+				Content: fmt.Sprintf("The amount has to be between 1 and %v", MAX_AMOUNT_ROLLS),
 			},
 		})
 		return
 	}
 
 	drops := EmulateDrop(commonRateWithoutRare, amount, vindictaRareDroptable, vindictaUncommonDroptable, vindictaCommonDroptable)
-
 	if lenOpt := len(i.ApplicationCommandData().Options); lenOpt < 2 || i.ApplicationCommandData().Options[1].BoolValue() {
 		AddAlwaysDroptable(amount, &drops, vindictaAlwaysDroptable)
 	}
 
-	dropWithPrice, ok := AmountToPrice(drops)
-	if !ok {
-		// Add content saying it's incomplete
-	}
+	dropWithPrice, total, ok := AmountToPrice(drops)
+	SortDrops(&dropWithPrice)
+	content := makeDropList(dropWithPrice, drops, total, ok)
 
-	sort.Slice(dropWithPrice, func(i, j int) bool {
-		comp, _ := dropWithPrice[i].price.Compare(dropWithPrice[j].price)
-		return comp == 1
-	})
-
-	content := "You got:\n"
-	for _, d := range dropWithPrice {
-		content += fmt.Sprintf("%v %v: %v gp\n", drops[d.name].Amount, d.name, d.price)
+	embed := discordgo.MessageEmbed{
+		Thumbnail: &discordgo.MessageEmbedThumbnail{
+			URL: vindictaUrl,
+		},
+		Title:       fmt.Sprintf("You killed vindicta %v times and you got:", amount),
+		Description: content,
 	}
 
 	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
-			Content: content,
+			Embeds: []*discordgo.MessageEmbed{&embed},
 		},
 	})
 }

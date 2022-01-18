@@ -23,11 +23,13 @@ var (
 		beasts.VindictaCommand,
 		beasts.HelwyrCommand,
 		general.HelpCommand,
+		general.ContributeCommand,
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		"vindicta": beasts.Vindicta,
-		"helwyr":   beasts.Helwyr,
-		"help":     general.Help,
+		"vindicta":   beasts.Vindicta,
+		"helwyr":     beasts.Helwyr,
+		"help":       general.Help,
+		"contribute": general.Contribute,
 	}
 	botToken string
 )

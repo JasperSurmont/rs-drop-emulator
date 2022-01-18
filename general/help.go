@@ -10,9 +10,9 @@ var HelpCommand = &discordgo.ApplicationCommand{
 func Help(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	embed := discordgo.MessageEmbed{
 		Title: "Help",
-		Description: `This bot simulates the drops one might get from doing an action a certain amount of times.
-			Depending on the action, you can have multiple options like adjusting the luck, adjusting reputation, etc.
-			Below are some of the Frequently Asked Questions.`,
+		Description: `This bot simulates the drops one might get from doing an action a certain amount of times. Depending on the action, you can have multiple options like adjusting the luck, adjusting reputation, etc.
+			
+		Below are some of the **Frequently Asked Questions.**`,
 		Fields: []*discordgo.MessageEmbedField{
 			{
 				Name: "How does it work?",
@@ -23,6 +23,10 @@ func Help(s *discordgo.Session, i *discordgo.InteractionCreate) {
 				Name: "How representative is it?",
 				Value: `All the information is taken from the [wiki](rs.wiki). This, together with the fact that especially the common / uncommon drop rates are not precisely known, makes this emulator not 100% representative.
 					For example: In the drop tables we often just see **common** or **uncommon**. In this example we take the ratio of common to uncommon to be 2 / 3, which might differ from the actual game.`,
+			},
+			{
+				Name:  "Can I contribute?",
+				Value: `Sure! Check the contribute command for more information`,
 			},
 		},
 	}

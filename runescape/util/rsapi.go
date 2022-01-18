@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
+	"time"
 
 	_ "embed"
 )
@@ -16,13 +18,16 @@ import (
 const DETAIL_URL = "https://services.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item="
 
 var idList = make(map[string]int)
+var itemCache = make(map[int]ItemCacheEntry)
+
+var itemCacheMutex = &sync.RWMutex{}
 
 //go:embed id-list.json
-var initData []byte
+var initIdlistData []byte
 
 // Load the IDlist in the map
 func init() {
-	err := json.Unmarshal(initData, &idList)
+	err := json.Unmarshal(initIdlistData, &idList)
 	if err != nil {
 		log.Fatalf("couldn't unmarshal idlist into map, %v", err)
 	}
@@ -30,24 +35,52 @@ func init() {
 
 // Look up the item price of name
 // Logging is already done, use err solely to check if it succeeded or not
-func GetItemPrice(name string) (price RSPrice, err error) {
+func GetItemPrice(name string, ch chan<- NamedRSPrice) {
 	lower := strings.ToLower(name)
 	if lower == "coin" || lower == "coins" {
-		price = "1"
+		ch <- NamedRSPrice{
+			Name:  "Coins",
+			Price: "1",
+		}
 		return
 	}
 	id, ok := idList[name]
 	if !ok {
-		err = errors.New("name not found in idlist")
+		ch <- NamedRSPrice{
+			Error: errors.New("name not found in idlist"),
+		}
+		log.Errorf("name not found in idlist %v", name)
 		return
 	}
-	price, err = GetItemPriceById(id)
-	return
+	price, err := GetItemPriceById(id)
+	ch <- NamedRSPrice{
+		Name:  name,
+		Price: price,
+		Error: err,
+	}
 }
 
 // Look up the item price of an item id
 // Logging is already done, use err solely to check if it succeeded or not
 func GetItemPriceById(id int) (price RSPrice, err error) {
+
+	// First we check the cache
+	itemCacheMutex.RLock()
+	item, ok := itemCache[id]
+	itemCacheMutex.RUnlock()
+	if ok {
+		if then, err2 := time.Parse(time.UnixDate, item.LastUpdated); err == nil && DateEqual(then, time.Now()) {
+			price = item.Price
+			return
+		} else {
+			log.Errorw("couldn't parse time from cache",
+				"id", id,
+				"item", item,
+				"err", err2,
+			)
+		}
+	}
+
 	res, err := http.Get(DETAIL_URL + strconv.Itoa(id))
 	if err != nil {
 		log.Errorw("request failed in GetItemPriceById",
@@ -83,6 +116,13 @@ func GetItemPriceById(id int) (price RSPrice, err error) {
 		)
 	}
 	price = detail.Item.Current.Price
+
+	itemCacheMutex.Lock()
+	itemCache[id] = ItemCacheEntry{
+		Price:       price,
+		LastUpdated: time.Now().Format(time.UnixDate),
+	}
+	itemCacheMutex.Unlock()
 	return
 }
 
@@ -185,6 +225,36 @@ func (p *RSPrice) Multiply(x int) error {
 	return nil
 }
 
+// Add the number with x and format afterwards
+func (p1 *RSPrice) Add(p2 RSPrice) error {
+	p1o, p2o := (*p1)[len(*p1)-1:], p2[len(p2)-1:]           //order
+	p1m, p2m := orderCharToFloat(p1o), orderCharToFloat(p2o) //multiplier
+
+	p1v, p2v := string((*p1)[:len(*p1)-1]), string(p2[:len(p2)-1]) //value
+
+	// Adjust for numbers without an order: every character is part of the price
+	if p1m == 1 {
+		p1v = string(*p1)
+	}
+	if p2m == 1 {
+		p2v = string(p2)
+	}
+
+	p1f, err := strconv.ParseFloat(p1v, 64) //float
+	if err != nil {
+		return err
+	}
+	p2f, err := strconv.ParseFloat(p2v, 64) //float
+	if err != nil {
+		return err
+	}
+
+	p1r, p2r := p1f*p1m, p2f*p2m //real
+	*p1 = RSPrice(fmt.Sprintf("%f", p1r+p2r))
+	p1.Format()
+	return nil
+}
+
 func (p *RSPrice) UnmarshalJSON(b []byte) error {
 	var s string
 
@@ -213,38 +283,3 @@ func orderCharToFloat(o RSPrice) float64 {
 		return 1
 	}
 }
-
-type DetailResponse struct {
-	Item struct {
-		Icon        string `json:"icon"`
-		IconLarge   string `json:"icon_large"`
-		ID          int    `json:"id"`
-		Type        string `json:"type"`
-		TypeIcon    string `json:"typeIcon"`
-		Name        string `json:"name"`
-		Description string `json:"description"`
-		Current     struct {
-			Trend string  `json:"trend"`
-			Price RSPrice `json:"price"`
-		} `json:"current"`
-		Today struct {
-			Trend string  `json:"trend"`
-			Price RSPrice `json:"price"`
-		} `json:"today"`
-		Members string `json:"members"`
-		Day30   struct {
-			Trend  string `json:"trend"`
-			Change string `json:"change"`
-		} `json:"day30"`
-		Day90 struct {
-			Trend  string `json:"trend"`
-			Change string `json:"change"`
-		} `json:"day90"`
-		Day180 struct {
-			Trend  string `json:"trend"`
-			Change string `json:"change"`
-		} `json:"day180"`
-	} `json:"item"`
-}
-
-type RSPrice string

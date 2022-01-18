@@ -7,13 +7,14 @@ import (
 )
 
 var (
+	helwyrUrl             = "https://runescape.wiki/images/Helwyr.png?8740d"
 	helwyrCommonDroptable = []Drop{
 		{
 			Name:        "Drakolith stone spirit",
 			AmountRange: [2]int{15, 25},
 		},
 		{
-			Name:        "Oricalcite stone spirit",
+			Name:        "Orichalcite stone spirit",
 			AmountRange: [2]int{15, 25},
 		},
 		{
@@ -69,30 +70,37 @@ var (
 		{
 			Rate: 1.0 / 179.0,
 			Name: "Dormant anima core helm",
+			Bold: true,
 		},
 		{
 			Rate: 1.0 / 179.0,
 			Name: "Dormant anima core body",
+			Bold: true,
 		},
 		{
 			Rate: 1.0 / 179.0,
 			Name: "Dormant anima core legs",
+			Bold: true,
 		},
 		{
 			Rate: 1.0 / 179.0,
 			Name: "Orb of the Cywir elders",
+			Bold: true,
 		},
 		{
 			Rate: 1.0 / 179.0,
 			Name: "Crest of Seren",
+			Bold: true,
 		},
 		{
 			Rate: 1.0 / 179.0,
 			Name: "Wand of the Cywir elders",
+			Bold: true,
 		},
 		{
 			Rate: 1.0 / 179.0,
 			Name: "Serenic essence",
+			Bold: true,
 		},
 	}
 
@@ -125,8 +133,8 @@ var HelwyrCommand = &discordgo.ApplicationCommand{
 
 func Helwyr(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	var amount int64 = 1
-	if opt0 := i.ApplicationCommandData().Options[0]; opt0 != nil {
-		amount = opt0.IntValue()
+	if lenOpt := len(i.ApplicationCommandData().Options); lenOpt >= 1 {
+		amount = i.ApplicationCommandData().Options[0].IntValue()
 	}
 
 	// Replace this with max value later
@@ -134,27 +142,33 @@ func Helwyr(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
-				Content: fmt.Sprintf("The maximum amount has to be between 1 and %v", MAX_AMOUNT_ROLLS),
+				Content: fmt.Sprintf("The amount has to be between 1 and %v", MAX_AMOUNT_ROLLS),
 			},
 		})
 		return
 	}
 
 	drops := EmulateDrop(commonRateWithoutRare, amount, helwyrRareDroptable, helwyrUncommonDroptable, helwyrCommonDroptable)
-
-	if opt1 := i.ApplicationCommandData().Options[1]; opt1 == nil || opt1.BoolValue() {
+	if lenOpt := len(i.ApplicationCommandData().Options); lenOpt < 2 || i.ApplicationCommandData().Options[1].BoolValue() {
 		AddAlwaysDroptable(amount, &drops, helwyrAlwaysDroptable)
 	}
 
-	content := "You got:\n"
-	for _, d := range drops {
-		content += fmt.Sprintf("%v %v\n", d.Amount, d.Name)
+	dropWithPrice, total, ok := AmountToPrice(drops)
+	SortDrops(&dropWithPrice)
+	content := makeDropList(dropWithPrice, drops, total, ok)
+
+	embed := discordgo.MessageEmbed{
+		Thumbnail: &discordgo.MessageEmbedThumbnail{
+			URL: helwyrUrl,
+		},
+		Title:       fmt.Sprintf("You killed helwyr %v times and you got:", amount),
+		Description: content,
 	}
 
 	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
-			Content: fmt.Sprintf(content),
+			Embeds: []*discordgo.MessageEmbed{&embed},
 		},
 	})
 }

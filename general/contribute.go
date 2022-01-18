@@ -25,7 +25,7 @@ func Contribute(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			},
 			{
 				Name: "My experience",
-				Value: `I've worked on many different projects (both for school and personal). These were mostly in JS/TS, Python, C(++) and Java. 
+				Value: `I've worked on many different projects	 (both for school and personal). These were mostly in JS/TS, Python, C(++) and Java. 
 					This is my first _big_ Go project. That is also why an experienced Go developer might look at my code and start to vomit.
 					However, I'm open for any feedback or contributions, as long as we keep it civil :).`,
 			},

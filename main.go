@@ -22,12 +22,16 @@ var (
 	commands = []*discordgo.ApplicationCommand{
 		beasts.VindictaCommand,
 		beasts.HelwyrCommand,
+		beasts.TwinfuriesCommand,
+		beasts.GregorovicCommand,
 		general.HelpCommand,
 		general.ContributeCommand,
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		"vindicta":   beasts.Vindicta,
 		"helwyr":     beasts.Helwyr,
+		"twinfuries": beasts.Twinfuries,
+		"gregorovic": beasts.Gregorovic,
 		"help":       general.Help,
 		"contribute": general.Contribute,
 	}
@@ -70,8 +74,15 @@ func startBot() {
 		log.Fatalf("error opening connection %v", err)
 	}
 
+	// Use guild only commands when testing, to propagate changes faster
+	env := os.Getenv("RS_DROP_EMULATOR_ENV")
+	guildId := "512644466281152526"
+	if env == "PROD" {
+		guildId = ""
+	}
+
 	for _, v := range commands {
-		_, err := discord.ApplicationCommandCreate(discord.State.User.ID, "", v)
+		_, err := discord.ApplicationCommandCreate(discord.State.User.ID, guildId, v)
 		if err != nil {
 			log.Fatalf("cannot create '%v' command: %v", v.Name, err)
 		}
@@ -81,7 +92,7 @@ func startBot() {
 
 	// Await termination
 	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINT, os.Interrupt, os.Kill)
+	signal.Notify(sc, syscall.SIGINT, os.Interrupt, syscall.SIGTERM)
 	s := <-sc
 
 	log.Infof("shutting down because with signal %v", s)

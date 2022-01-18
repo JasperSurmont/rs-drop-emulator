@@ -9,13 +9,13 @@ import (
 )
 
 const (
-	CommonRateWithoutRare float32 = 2.0 / 3.0
-	CommonRateWithRare    float32 = 6.0 / 10.0
-	UncommonRateWithRare  float32 = 3.0 / 10.0
+	CommonRateWithoutRare float64 = 2.0 / 3.0
+	CommonRateWithRare    float64 = 6.0 / 10.0
+	UncommonRateWithRare  float64 = 3.0 / 10.0
 )
 
 type Drop struct {
-	Rate        float32
+	Rate        float64
 	Id          string
 	Name        string
 	AmountRange [2]int

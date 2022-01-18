@@ -140,7 +140,7 @@ func Vindicta(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	drops := core.EmulateDropGwd2(core.CommonRateWithoutRare, amount, vindictaRareDroptable, vindictaUncommonDroptable, vindictaCommonDroptable)
+	drops := core.EmulateDropGwd2(amount, vindictaRareDroptable, vindictaUncommonDroptable, vindictaCommonDroptable)
 	if lenOpt := len(i.ApplicationCommandData().Options); lenOpt < 2 || i.ApplicationCommandData().Options[1].BoolValue() {
 		core.AddAlwaysDroptable(amount, &drops, vindictaAlwaysDroptable)
 	}

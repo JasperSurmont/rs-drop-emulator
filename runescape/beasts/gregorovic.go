@@ -145,7 +145,7 @@ func Gregorovic(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	drops := core.EmulateDropGwd2(core.CommonRateWithoutRare, amount, gregorovicRareDroptable, gregorovicUncommonDroptable, gregorovicCommonDroptable)
+	drops := core.EmulateDropGwd2(amount, gregorovicRareDroptable, gregorovicUncommonDroptable, gregorovicCommonDroptable)
 	if lenOpt := len(i.ApplicationCommandData().Options); lenOpt < 2 || i.ApplicationCommandData().Options[1].BoolValue() {
 		core.AddAlwaysDroptable(amount, &drops, gregorovicAlwaysDroptable)
 	}

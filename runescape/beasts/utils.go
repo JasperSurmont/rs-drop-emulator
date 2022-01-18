@@ -33,7 +33,7 @@ func (d *Drop) SetAmount() {
 }
 
 // Emulate a drop with a rare table that has priority, and without a normal rare table
-func EmulateDrop(commonRateWithoutRare float32, amount int64, rareDroptable []Drop, uncommonDroptable []Drop, commonDroptable []Drop) map[string]*Drop {
+func EmulateDropGwd2(commonRateWithoutRare float32, amount int64, rareDroptable []Drop, uncommonDroptable []Drop, commonDroptable []Drop) map[string]*Drop {
 
 	var drops map[string]*Drop = make(map[string]*Drop)
 
@@ -77,7 +77,7 @@ func AddAlwaysDroptable(amount int64, drops *map[string]*Drop, alwaysDroptable [
 	}
 }
 
-// Returns an array of structs with all the drops with their price
+// Returns an array of structs with all the drops and their price
 func AmountToPrice(drops map[string]*Drop) (res []util.NamedRSPrice, total util.RSPrice, ok bool) {
 	ok = true
 	total = util.RSPrice("0")
@@ -88,7 +88,8 @@ func AmountToPrice(drops map[string]*Drop) (res []util.NamedRSPrice, total util.
 		go util.GetItemPrice(d.Name, ch)
 	}
 
-	for _, _ = range drops {
+	// We get same amount of values out of the channel, but continue if there's an error
+	for range drops {
 		namedPrice := <-ch
 		if namedPrice.Error != nil {
 			ok = false
@@ -112,6 +113,7 @@ func AmountToPrice(drops map[string]*Drop) (res []util.NamedRSPrice, total util.
 	return
 }
 
+// Sort drops in decreasing value
 func SortDrops(m *[]util.NamedRSPrice) {
 	sort.Slice((*m)[:], func(i, j int) bool {
 		comp, _ := (*m)[i].Price.Compare((*m)[j].Price)
@@ -119,6 +121,7 @@ func SortDrops(m *[]util.NamedRSPrice) {
 	})
 }
 
+// Given the drops with values and drops with prices, make the drop list to be printed
 func makeDropList(n []util.NamedRSPrice, m map[string]*Drop, total util.RSPrice, ok bool) string {
 	var sb strings.Builder
 	for _, d := range n {

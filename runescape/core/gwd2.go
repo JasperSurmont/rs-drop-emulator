@@ -15,9 +15,12 @@ func EmulateDropGwd2(amount int64, rareDroptable []Drop, uncommonDroptable []Dro
 
 		var drop Drop
 
-		if rand.Float64() < sum {
+		roll := rand.Float64()
+
+		// We split up the interval: [0, sum) = rare, [sum, sum+uncommonrate) = uncommon, [sum+uncommon, 1) = common
+		if roll < sum {
 			drop = rareDroptable[rand.Intn(len(rareDroptable))]
-		} else if rand.Float64() > CommonRateWithoutRare {
+		} else if roll < sum+UncommonRateWithoutRare {
 			drop = uncommonDroptable[rand.Intn(len(uncommonDroptable))]
 		} else {
 			drop = commonDroptable[rand.Intn(len(commonDroptable))]

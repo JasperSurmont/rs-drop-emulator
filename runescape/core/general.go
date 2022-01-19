@@ -9,9 +9,9 @@ import (
 )
 
 const (
-	CommonRateWithoutRare float64 = 2.0 / 3.0
-	CommonRateWithRare    float64 = 6.0 / 10.0
-	UncommonRateWithRare  float64 = 3.0 / 10.0
+	UncommonRateWithoutRare float64 = 1.0 / 3.0
+	RareRate                float64 = 1.0 / 10.0
+	UncommonRateWithRare    float64 = 3.0 / 10.0
 )
 
 type Drop struct {

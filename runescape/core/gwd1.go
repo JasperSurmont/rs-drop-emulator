@@ -30,10 +30,13 @@ func EmulateDropGwd1(amount int64, rareDroptable []Drop, uncommonDroptable []Dro
 
 		var drop Drop
 
-		// We first roll the uniques
-		if rand.Float64() < sum {
+		roll := rand.Float64()
+
+		// We split up the interval: [0, sum) = rare, [sum, sum+1/128) = Hilt chance, [sum+1/128,sum+1/128+1/128) = Shard chance,
+		// [sum+1/128+1/128, sum+1/128+1/128+uncommonrate) = uncommon, [sum+1/128+1/128+uncommonrate,1) = common
+		if roll < sum {
 			drop = rareDroptable[rand.Intn(len(rareDroptable))]
-		} else if rand.Float64() < 1.0/128.0 { // Hilt chance
+		} else if sum < sum+1.0/128.0 { // Hilt chance
 			if rand.Float64() < 1.0/4.0 {
 				drop = hilt
 			} else {
@@ -42,7 +45,7 @@ func EmulateDropGwd1(amount int64, rareDroptable []Drop, uncommonDroptable []Dro
 					AmountRange: [2]int{19501, 21000},
 				}
 			}
-		} else if rand.Float64() < 1.0/128.0 { // Shard chance
+		} else if roll < sum+1.0/128.0+1.0/128.0 { // Shard chance
 			if rand.Float64() < 1.0/2.0 {
 				drop = godswordShards[rand.Intn(len(godswordShards))]
 			} else {
@@ -51,7 +54,7 @@ func EmulateDropGwd1(amount int64, rareDroptable []Drop, uncommonDroptable []Dro
 					AmountRange: [2]int{20500, 21000},
 				}
 			}
-		} else if rand.Float64() > CommonRateWithoutRare {
+		} else if roll < sum+1.0/128.0+1.0/128.0+UncommonRateWithoutRare {
 			drop = uncommonDroptable[rand.Intn(len(uncommonDroptable))]
 		} else {
 			drop = commonDroptable[rand.Intn(len(commonDroptable))]

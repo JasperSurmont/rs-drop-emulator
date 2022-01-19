@@ -30,4 +30,5 @@ Interacting with the RS Api and cache (to get the GE Prices) is specified in [ut
 - More tests
 - Add bosses
 - Add option for uniques only
+- Hard mode
 - _Add clues?_

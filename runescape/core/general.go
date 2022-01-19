@@ -73,7 +73,7 @@ func AmountToPrice(drops map[string]*Drop) (res []util.NamedRSPrice, total util.
 	return
 }
 
-// Sort drops in decreasing value
+// Sort given map in decreasing value
 func SortDrops(m *[]util.NamedRSPrice) {
 	sort.Slice((*m)[:], func(i, j int) bool {
 		comp, _ := (*m)[i].Price.Compare((*m)[j].Price)
@@ -81,6 +81,7 @@ func SortDrops(m *[]util.NamedRSPrice) {
 	})
 }
 
+// Add the drops that should always be dropped to the drops pointer
 func AddAlwaysDroptable(amount int64, drops *map[string]*Drop, alwaysDroptable []Drop) {
 	for _, d := range alwaysDroptable {
 		add := d // Add copy, otherwise it adjusts original value
@@ -107,7 +108,7 @@ func MakeDropList(n []util.NamedRSPrice, m map[string]*Drop, total util.RSPrice,
 	}
 	sb.WriteString(fmt.Sprintf("\n**Total GE value: %v**", total))
 	if !ok {
-		sb.WriteString("\nSomething went wrong; not all items were processed correctly")
+		sb.WriteString("\nSomething went wrong; not all items were processed correctly.")
 	}
 	return sb.String()
 }

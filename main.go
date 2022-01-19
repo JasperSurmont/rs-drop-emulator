@@ -9,6 +9,7 @@ import (
 
 	"rs-drop-emulator/general"
 	"rs-drop-emulator/runescape/beasts"
+	"rs-drop-emulator/runescape/core"
 	"rs-drop-emulator/runescape/util"
 
 	"github.com/bwmarrin/discordgo"
@@ -20,6 +21,7 @@ var (
 	log      *zap.SugaredLogger
 	discord  *discordgo.Session
 	commands = []*discordgo.ApplicationCommand{
+		beasts.GiantMoleCommand,
 		beasts.ZilyanaCommand,
 		beasts.GraardorCommand,
 		beasts.KreearraCommand,
@@ -28,10 +30,12 @@ var (
 		beasts.HelwyrCommand,
 		beasts.TwinfuriesCommand,
 		beasts.GregorovicCommand,
+		beasts.VoragoCommand,
 		general.HelpCommand,
 		general.ContributeCommand,
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
+		"giantmole":  beasts.GiantMole,
 		"graardor":   beasts.Graardor,
 		"zilyana":    beasts.Zilyana,
 		"kreearra":   beasts.Kreearra,
@@ -40,6 +44,7 @@ var (
 		"helwyr":     beasts.Helwyr,
 		"twinfuries": beasts.Twinfuries,
 		"gregorovic": beasts.Gregorovic,
+		"vorago":     beasts.Vorago,
 		"help":       general.Help,
 		"contribute": general.Contribute,
 	}
@@ -51,6 +56,7 @@ func init() {
 	beasts.ConfigLogger()
 	general.ConfigLogger()
 	util.ConfigLogger()
+	core.ConfigLogger()
 
 	godotenv.Load()
 	botToken = os.Getenv("DISCORD_BOT_TOKEN")

@@ -35,7 +35,14 @@ func init() {
 
 // Look up the item price of name
 // Logging is already done, use err solely to check if it succeeded or not
-func GetItemPrice(name string, ch chan<- NamedRSPrice) {
+func GetItemPrice(name string, ch chan<- NamedRSPrice, untradeable bool) {
+	if untradeable {
+		ch <- NamedRSPrice{
+			Name:  name,
+			Price: "0",
+		}
+		return
+	}
 	lower := strings.ToLower(name)
 	if lower == "coin" || lower == "coins" {
 		ch <- NamedRSPrice{

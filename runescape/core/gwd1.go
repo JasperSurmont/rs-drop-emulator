@@ -71,13 +71,3 @@ func EmulateDropGwd1(amount int64, rareDroptable []Drop, uncommonDroptable []Dro
 	}
 	return drops
 }
-
-func addDropValueToMap(m map[string]*Drop, d *Drop) {
-	_, ok := m[d.Name]
-
-	if ok {
-		m[d.Name].Amount += d.Amount
-	} else {
-		m[d.Name] = d
-	}
-}

@@ -138,8 +138,8 @@ var ZilyanaCommand = &discordgo.ApplicationCommand{
 
 func Zilyana(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	var amount int64 = 1
-	if lenOpt := len(i.ApplicationCommandData().Options); lenOpt >= 1 {
-		amount = i.ApplicationCommandData().Options[0].IntValue()
+	if amountOpt := core.GetOptionWithName(i.ApplicationCommandData().Options, "amount"); amountOpt.Name != "" {
+		amount = amountOpt.IntValue()
 	}
 
 	// Replace this with max value later
@@ -154,7 +154,7 @@ func Zilyana(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 
 	drops := core.EmulateDropGwd1(amount, zilyanaRareDroptable, zilyanaUncommonDroptable, zilyanaCommonDroptable, saradominHilt)
-	if lenOpt := len(i.ApplicationCommandData().Options); lenOpt < 2 || i.ApplicationCommandData().Options[1].BoolValue() {
+	if enableGuarantees := core.GetOptionWithName(i.ApplicationCommandData().Options, "enable-guarantees"); enableGuarantees.Name == "" || enableGuarantees.BoolValue() {
 		core.AddAlwaysDroptable(amount, &drops, zilyanaAlwaysDroptable)
 	}
 

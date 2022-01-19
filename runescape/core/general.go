@@ -6,12 +6,12 @@ import (
 	"rs-drop-emulator/runescape/util"
 	"sort"
 	"strings"
+
+	"github.com/bwmarrin/discordgo"
 )
 
 const (
 	UncommonRateWithoutRare float64 = 1.0 / 3.0
-	RareRate                float64 = 1.0 / 10.0
-	UncommonRateWithRare    float64 = 3.0 / 10.0
 	MAX_AMOUNT_ROLLS                = 500
 )
 
@@ -19,14 +19,20 @@ type Drop struct {
 	Rate        float64
 	Id          string
 	Name        string
+	Untradeable bool
 	AmountRange [2]int
 	Amount      int
+	Amounts     []int  // If there are only certain specified amounts
 	OtherDrops  []Drop // Other drops that always go with this drop
 	Bold        bool   // Whether the drop should be put in bold or not
 }
 
 func (d *Drop) SetAmount() {
 	if d.Amount != 0 {
+		return
+	}
+	if len(d.Amounts) > 0 {
+		d.Amount = d.Amounts[rand.Intn(len(d.Amounts))]
 		return
 	}
 	if d.AmountRange == [2]int{0, 0} {
@@ -45,7 +51,7 @@ func AmountToPrice(drops map[string]*Drop) (res []util.NamedRSPrice, total util.
 	ch := make(chan util.NamedRSPrice)
 
 	for _, d := range drops {
-		go util.GetItemPrice(d.Name, ch)
+		go util.GetItemPrice(d.Name, ch, d.Untradeable)
 	}
 
 	// We get same amount of values out of the channel, but continue if there's an error
@@ -111,4 +117,30 @@ func MakeDropList(n []util.NamedRSPrice, m map[string]*Drop, total util.RSPrice,
 		sb.WriteString("\nSomething went wrong; not all items were processed correctly.")
 	}
 	return sb.String()
+}
+
+func addDropValueToMap(m map[string]*Drop, d *Drop) {
+	_, ok := m[d.Name]
+
+	if ok {
+		m[d.Name].Amount += d.Amount
+	} else {
+		m[d.Name] = d
+	}
+}
+
+// Remove index i from the slice s
+func RemoveDropFromTable(s []Drop, i int) []Drop {
+	s[i] = s[len(s)-1]
+	return s[:len(s)-1]
+}
+
+// Get the option with the given name. If not found returns an empty option, so check if the returned option has eg a non-empty name
+func GetOptionWithName(opt []*discordgo.ApplicationCommandInteractionDataOption, name string) discordgo.ApplicationCommandInteractionDataOption {
+	for i, o := range opt {
+		if o.Name == name {
+			return *opt[i]
+		}
+	}
+	return discordgo.ApplicationCommandInteractionDataOption{}
 }

@@ -5,6 +5,9 @@ The goal is that the user can input a variety of variables that have an influenc
 
 ## Currently implemented bosses
 
+- [Giant Mole]('./runescape/beasts/giantmole.go)
+- [Vorago]('./runescape/beasts/vorago.go)
+
 All GWD1 bosses:
 - [K'ril](./runescape/beasts/kril.go)
 - [Graardor](./runescape/beasts/graardor.go)

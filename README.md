@@ -5,8 +5,17 @@ The goal is that the user can input a variety of variables that have an influenc
 
 ## Currently implemented bosses
 
+All GWD1 bosses:
+- [K'ril](./runescape/beasts/kril.go)
+- [Graardor](./runescape/beasts/graardor.go)
+- [Kree'arra](./runescape/beasts/kreearra.go)
+- [Zilyana](./runescape/beasts/zilyana.go)
+
+All GWD2 bosses:
 - [Vindicta](./runescape/beasts/vindicta.go)
 - [Helwyr](./runescape/beasts/helwyr.go)
+- [Gregorovic](./runescape/beasts/gregorovic.go)
+- [Twin Furies](./runescape/beasts/twinfuries.go)
 
 ## TODO
 

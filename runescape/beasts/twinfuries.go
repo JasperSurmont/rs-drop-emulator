@@ -134,11 +134,11 @@ func Twinfuries(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	}
 
 	// Replace this with max value later
-	if amount > MAX_AMOUNT_ROLLS || amount < 1 {
+	if amount > core.MAX_AMOUNT_ROLLS || amount < 1 {
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
-				Content: fmt.Sprintf("The amount has to be between 1 and %v", MAX_AMOUNT_ROLLS),
+				Content: fmt.Sprintf("The amount has to be between 1 and %v", core.MAX_AMOUNT_ROLLS),
 			},
 		})
 		return

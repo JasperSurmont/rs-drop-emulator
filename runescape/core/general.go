@@ -12,6 +12,7 @@ const (
 	UncommonRateWithoutRare float64 = 1.0 / 3.0
 	RareRate                float64 = 1.0 / 10.0
 	UncommonRateWithRare    float64 = 3.0 / 10.0
+	MAX_AMOUNT_ROLLS                = 500
 )
 
 type Drop struct {
@@ -20,10 +21,14 @@ type Drop struct {
 	Name        string
 	AmountRange [2]int
 	Amount      int
-	Bold        bool // Whether the drop should be put in bold or not
+	OtherDrops  []Drop // Other drops that always go with this drop
+	Bold        bool   // Whether the drop should be put in bold or not
 }
 
 func (d *Drop) SetAmount() {
+	if d.Amount != 0 {
+		return
+	}
 	if d.AmountRange == [2]int{0, 0} {
 		d.Amount = 1
 	} else {
@@ -78,12 +83,14 @@ func SortDrops(m *[]util.NamedRSPrice) {
 
 func AddAlwaysDroptable(amount int64, drops *map[string]*Drop, alwaysDroptable []Drop) {
 	for _, d := range alwaysDroptable {
-		_, ok := (*drops)[d.Name]
+		add := d // Add copy, otherwise it adjusts original value
+		_, ok := (*drops)[add.Name]
+		add.SetAmount()
 		if ok {
-			(*drops)[d.Name].Amount += d.Amount * int(amount)
+			(*drops)[add.Name].Amount += add.Amount * int(amount)
 		} else {
-			d.Amount *= int(amount)
-			(*drops)[d.Name] = &d
+			add.Amount *= int(amount)
+			(*drops)[add.Name] = &add
 		}
 	}
 }

@@ -20,6 +20,10 @@ var (
 	log      *zap.SugaredLogger
 	discord  *discordgo.Session
 	commands = []*discordgo.ApplicationCommand{
+		beasts.ZilyanaCommand,
+		beasts.GraardorCommand,
+		beasts.KreearraCommand,
+		beasts.KrilCommand,
 		beasts.VindictaCommand,
 		beasts.HelwyrCommand,
 		beasts.TwinfuriesCommand,
@@ -28,6 +32,10 @@ var (
 		general.ContributeCommand,
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
+		"graardor":   beasts.Graardor,
+		"zilyana":    beasts.Zilyana,
+		"kreearra":   beasts.Kreearra,
+		"kril":       beasts.Kril,
 		"vindicta":   beasts.Vindicta,
 		"helwyr":     beasts.Helwyr,
 		"twinfuries": beasts.Twinfuries,

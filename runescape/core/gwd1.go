@@ -36,7 +36,7 @@ func EmulateDropGwd1(amount int64, rareDroptable []Drop, uncommonDroptable []Dro
 		// [sum+1/128+1/128, sum+1/128+1/128+uncommonrate) = uncommon, [sum+1/128+1/128+uncommonrate,1) = common
 		if roll < sum {
 			drop = rareDroptable[rand.Intn(len(rareDroptable))]
-		} else if sum < sum+1.0/128.0 { // Hilt chance
+		} else if roll < sum+1.0/128.0 { // Hilt chance
 			if rand.Float64() < 1.0/4.0 {
 				drop = hilt
 			} else {
@@ -61,13 +61,23 @@ func EmulateDropGwd1(amount int64, rareDroptable []Drop, uncommonDroptable []Dro
 		}
 
 		drop.SetAmount()
-		_, ok := drops[drop.Name]
+		addDropValueToMap(drops, &drop)
 
-		if ok {
-			drops[drop.Name].Amount += drop.Amount
-		} else {
-			drops[drop.Name] = &drop
+		// Add drops that always go together
+		for _, d := range drop.OtherDrops {
+			d.SetAmount()
+			addDropValueToMap(drops, &d)
 		}
 	}
 	return drops
+}
+
+func addDropValueToMap(m map[string]*Drop, d *Drop) {
+	_, ok := m[d.Name]
+
+	if ok {
+		m[d.Name].Amount += d.Amount
+	} else {
+		m[d.Name] = d
+	}
 }

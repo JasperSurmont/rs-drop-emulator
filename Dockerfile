@@ -1,6 +1,9 @@
 #build stage
 FROM golang:1.17-alpine
 
+
+ENV GO111MODULE=on
+
 WORKDIR /app
 COPY go.mod ./
 COPY go.sum ./
@@ -9,6 +12,6 @@ RUN go mod download
 
 COPY *.go ./
 
-RUN go build -o /rs-drop-emulator
+RUN go build -o /rs-drop-emulator 
 
 CMD ["/rs-drop-emulator"]

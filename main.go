@@ -8,9 +8,7 @@ import (
 	"syscall"
 
 	"rs-drop-emulator/general"
-	"rs-drop-emulator/runescape/beasts"
-	"rs-drop-emulator/runescape/core"
-	"rs-drop-emulator/runescape/util"
+	"rs-drop-emulator/runescape"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
@@ -21,30 +19,30 @@ var (
 	log      *zap.SugaredLogger
 	discord  *discordgo.Session
 	commands = []*discordgo.ApplicationCommand{
-		beasts.GiantMoleCommand,
-		beasts.ZilyanaCommand,
-		beasts.GraardorCommand,
-		beasts.KreearraCommand,
-		beasts.KrilCommand,
-		beasts.VindictaCommand,
-		beasts.HelwyrCommand,
-		beasts.TwinfuriesCommand,
-		beasts.GregorovicCommand,
-		beasts.VoragoCommand,
+		runescape.GiantMoleCommand,
+		runescape.ZilyanaCommand,
+		runescape.GraardorCommand,
+		runescape.KreearraCommand,
+		runescape.KrilCommand,
+		runescape.VindictaCommand,
+		runescape.HelwyrCommand,
+		runescape.TwinfuriesCommand,
+		runescape.GregorovicCommand,
+		runescape.VoragoCommand,
 		general.HelpCommand,
 		general.ContributeCommand,
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		"giantmole":  beasts.GiantMole,
-		"graardor":   beasts.Graardor,
-		"zilyana":    beasts.Zilyana,
-		"kreearra":   beasts.Kreearra,
-		"kril":       beasts.Kril,
-		"vindicta":   beasts.Vindicta,
-		"helwyr":     beasts.Helwyr,
-		"twinfuries": beasts.Twinfuries,
-		"gregorovic": beasts.Gregorovic,
-		"vorago":     beasts.Vorago,
+		"giantmole":  runescape.GiantMole,
+		"graardor":   runescape.Graardor,
+		"zilyana":    runescape.Zilyana,
+		"kreearra":   runescape.Kreearra,
+		"kril":       runescape.Kril,
+		"vindicta":   runescape.Vindicta,
+		"helwyr":     runescape.Helwyr,
+		"twinfuries": runescape.Twinfuries,
+		"gregorovic": runescape.Gregorovic,
+		"vorago":     runescape.Vorago,
 		"help":       general.Help,
 		"contribute": general.Contribute,
 	}
@@ -53,10 +51,8 @@ var (
 
 func init() {
 	configLogger()
-	beasts.ConfigLogger()
 	general.ConfigLogger()
-	util.ConfigLogger()
-	core.ConfigLogger()
+	runescape.ConfigLogger()
 
 	godotenv.Load()
 	botToken = os.Getenv("DISCORD_BOT_TOKEN")

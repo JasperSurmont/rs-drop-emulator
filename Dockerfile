@@ -1,16 +1,16 @@
 #build stage
 FROM golang:1.17-alpine
 
-
-ENV GO111MODULE=on
-
 WORKDIR /app
+
+ENV RS_DROP_EMULATOR_ENV=PROD
+
 COPY go.mod ./
 COPY go.sum ./
 
 RUN go mod download
 
-COPY *.go ./
+COPY . ./
 
 RUN go build -o /rs-drop-emulator 
 

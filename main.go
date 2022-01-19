@@ -7,8 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"rs-drop-emulator/general"
-	"rs-drop-emulator/runescape"
+	"github.com/jaspersurmont/rs-drop-emulator/general"
+	"github.com/jaspersurmont/rs-drop-emulator/runescape"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"

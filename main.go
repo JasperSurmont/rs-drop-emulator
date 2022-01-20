@@ -2,22 +2,20 @@ package main
 
 import (
 	"fmt"
-	initlog "log"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/jaspersurmont/rs-drop-emulator/general"
+	"github.com/jaspersurmont/rs-drop-emulator/logger"
 	"github.com/jaspersurmont/rs-drop-emulator/runescape"
 
-	"github.com/blendle/zapdriver"
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
-	"go.uber.org/zap"
 )
 
 var (
-	log      *zap.SugaredLogger
+	log      logger.LoggerWrapper
 	discord  *discordgo.Session
 	commands = []*discordgo.ApplicationCommand{
 		runescape.GiantMoleCommand,
@@ -53,9 +51,7 @@ var (
 )
 
 func init() {
-	configLogger()
-	general.ConfigLogger()
-	runescape.ConfigLogger()
+	log = logger.CreateLogger("main")
 
 	godotenv.Load()
 	botToken = os.Getenv("DISCORD_BOT_TOKEN")
@@ -101,9 +97,7 @@ func startBot() {
 		}
 	}
 
-	log.Infow("Bot succesfully started up and listening",
-		zapdriver.Label("env", env),
-	)
+	log.Info("Bot succesfully started up and listening")
 
 	// Await termination
 	sc := make(chan os.Signal, 1)
@@ -112,23 +106,4 @@ func startBot() {
 
 	log.Infof("shutting down because with signal %v", s)
 	discord.Close()
-}
-
-func configLogger() {
-	var err error
-	var logger *zap.Logger
-
-	env := os.Getenv("RS_DROP_EMULATOR_ENV")
-
-	if env == "PROD" {
-		logger, err = zapdriver.NewProduction()
-	} else {
-		logger, err = zap.NewDevelopment()
-	}
-	if err != nil {
-		initlog.Fatalf("couldn't config logger; %v", err)
-	}
-
-	log = logger.Sugar().Named("main")
-	zap.ReplaceGlobals(logger)
 }

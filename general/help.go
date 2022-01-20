@@ -8,6 +8,7 @@ var HelpCommand = &discordgo.ApplicationCommand{
 }
 
 func Help(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	log.Infow("command executed", "command", HelpCommand.Name)
 	embed := discordgo.MessageEmbed{
 		Title: "Help",
 		Description: `This bot simulates the drops one might get from doing an action a certain amount of times. Depending on the action, you can have multiple options like adjusting the luck, adjusting reputation, etc.

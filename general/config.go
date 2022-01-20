@@ -1,10 +1,12 @@
 package general
 
-import "go.uber.org/zap"
+import (
+	"github.com/jaspersurmont/rs-drop-emulator/logger"
+)
 
-var log *zap.SugaredLogger = zap.L().Sugar()
+var log logger.LoggerWrapper
 
 // ConfigLogger gets called when the global logger has been set up correctly
-func ConfigLogger() {
-	log = zap.L().Sugar().Named("general")
+func init() {
+	log = logger.CreateLogger("general")
 }

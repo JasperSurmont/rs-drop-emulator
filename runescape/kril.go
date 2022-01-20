@@ -177,4 +177,6 @@ func Kril(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			Embeds: []*discordgo.MessageEmbed{&embed},
 		},
 	})
+	log.Infow("command executed", "command", KrilCommand.Name)
+
 }

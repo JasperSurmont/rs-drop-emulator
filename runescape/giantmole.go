@@ -187,6 +187,7 @@ func GiantMole(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			Embeds: []*discordgo.MessageEmbed{&embed},
 		},
 	})
+	log.Infow("command executed", "command", GiantMoleCommand.Name)
 }
 
 // There are 8 uncommons, 3 commons and 1 rare

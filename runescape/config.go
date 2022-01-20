@@ -1,12 +1,12 @@
 package runescape
 
 import (
-	"go.uber.org/zap"
+	"github.com/jaspersurmont/rs-drop-emulator/logger"
 )
 
-var log *zap.SugaredLogger = zap.L().Sugar()
+var log logger.LoggerWrapper
 
 // ConfigLogger gets called when the global logger has been set up correctly
-func ConfigLogger() {
-	log = zap.L().Sugar().Named("runescape")
+func init() {
+	log = logger.CreateLogger("runescape")
 }

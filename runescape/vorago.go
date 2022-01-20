@@ -136,6 +136,7 @@ func Vorago(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			Embeds: []*discordgo.MessageEmbed{&embed},
 		},
 	})
+	log.Infow("command executed", "command", VoragoCommand.Name)
 }
 
 func EmulateDropGwdVorago(amount int64, rareDroptable []Drop, commonDroptable []Drop, energyDrop Drop) map[string]*Drop {

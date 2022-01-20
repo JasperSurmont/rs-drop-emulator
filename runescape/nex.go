@@ -244,6 +244,8 @@ func Nex(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			Embeds: []*discordgo.MessageEmbed{&embed},
 		},
 	})
+	log.Infow("command executed", "command", NexCommand.Name)
+
 }
 
 func emulateDropNex(amount int64, rareDroptable []Drop, uncommonDroptable []Drop, commonDroptable []Drop, nexPotions []Drop) map[string]*Drop {

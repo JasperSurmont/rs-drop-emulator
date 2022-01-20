@@ -130,3 +130,36 @@ func GetItemPriceById(id int) (price RSPrice, err error) {
 	itemCacheMutex.Unlock()
 	return
 }
+
+type DetailResponse struct {
+	Item struct {
+		Icon        string `json:"icon"`
+		IconLarge   string `json:"icon_large"`
+		ID          int    `json:"id"`
+		Type        string `json:"type"`
+		TypeIcon    string `json:"typeIcon"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		Current     struct {
+			Trend string  `json:"trend"`
+			Price RSPrice `json:"price"`
+		} `json:"current"`
+		Today struct {
+			Trend string  `json:"trend"`
+			Price RSPrice `json:"price"`
+		} `json:"today"`
+		Members string `json:"members"`
+		Day30   struct {
+			Trend  string `json:"trend"`
+			Change string `json:"change"`
+		} `json:"day30"`
+		Day90 struct {
+			Trend  string `json:"trend"`
+			Change string `json:"change"`
+		} `json:"day90"`
+		Day180 struct {
+			Trend  string `json:"trend"`
+			Change string `json:"change"`
+		} `json:"day180"`
+	} `json:"item"`
+}

@@ -152,7 +152,7 @@ func Zilyana(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	drops := EmulateDropGwd1(amount, zilyanaRareDroptable, zilyanaUncommonDroptable, zilyanaCommonDroptable, saradominHilt)
+	drops := emulateDropGwd1(amount, zilyanaRareDroptable, zilyanaUncommonDroptable, zilyanaCommonDroptable, saradominHilt)
 	if enableGuarantees := GetOptionWithName(i.ApplicationCommandData().Options, "enable-guarantees"); enableGuarantees.Name == "" || enableGuarantees.BoolValue() {
 		AddAlwaysDroptable(amount, &drops, zilyanaAlwaysDroptable)
 	}

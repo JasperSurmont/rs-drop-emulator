@@ -168,7 +168,7 @@ func EmulateDropGwdVorago(amount int64, rareDroptable []Drop, commonDroptable []
 			roll = rand.Float64()
 
 			if roll < sum && !rareDropped {
-				drop = rareDroptable[rand.Intn(len(rareDroptable))]
+				drop = determineDropWithRates(rand.Float64(), &rareDroptable)
 				rareDropped = true
 			} else {
 				drop = cd[rand.Intn(len(cd))]

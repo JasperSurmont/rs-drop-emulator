@@ -3,7 +3,7 @@ package runescape
 import "math/rand"
 
 // Emulate a drop with a rare table that has priority, and without a normal rare table
-func EmulateDropGwd2(amount int64, rareDroptable []Drop, uncommonDroptable []Drop, commonDroptable []Drop) map[string]*Drop {
+func emulateDropGwd2(amount int64, rareDroptable []Drop, uncommonDroptable []Drop, commonDroptable []Drop) map[string]*Drop {
 
 	var drops map[string]*Drop = make(map[string]*Drop)
 
@@ -23,7 +23,7 @@ func EmulateDropGwd2(amount int64, rareDroptable []Drop, uncommonDroptable []Dro
 		} else if roll < sum+UncommonRateWithoutRare {
 			drop = uncommonDroptable[rand.Intn(len(uncommonDroptable))]
 		} else {
-			drop = commonDroptable[rand.Intn(len(commonDroptable))]
+			drop = determineDropWithRates(rand.Float64(), &rareDroptable)
 		}
 
 		drop.SetAmount()

@@ -30,8 +30,9 @@ Interacting with the RS Api and cache (to get the GE Prices) is specified in [ut
 
 ## TODO
 
+- Fix rare droprate with rares being not equal
 - More tests
-- Add bosses
+- Rare drop table
 - Add option for uniques only
 - Hard mode
 - _Add clues?_

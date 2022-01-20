@@ -143,7 +143,7 @@ func Gregorovic(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	drops := EmulateDropGwd2(amount, gregorovicRareDroptable, gregorovicUncommonDroptable, gregorovicCommonDroptable)
+	drops := emulateDropGwd2(amount, gregorovicRareDroptable, gregorovicUncommonDroptable, gregorovicCommonDroptable)
 	if enableGuarantees := GetOptionWithName(i.ApplicationCommandData().Options, "enable-guarantees"); enableGuarantees.Name == "" || enableGuarantees.BoolValue() {
 		AddAlwaysDroptable(amount, &drops, gregorovicAlwaysDroptable)
 	}

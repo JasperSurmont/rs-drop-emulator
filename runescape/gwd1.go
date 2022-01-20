@@ -19,7 +19,7 @@ var (
 	}
 )
 
-func EmulateDropGwd1(amount int64, rareDroptable []Drop, uncommonDroptable []Drop, commonDroptable []Drop, hilt Drop) map[string]*Drop {
+func emulateDropGwd1(amount int64, rareDroptable []Drop, uncommonDroptable []Drop, commonDroptable []Drop, hilt Drop) map[string]*Drop {
 	var drops map[string]*Drop = make(map[string]*Drop)
 
 	for i := int64(0); i < amount; i++ {
@@ -35,7 +35,7 @@ func EmulateDropGwd1(amount int64, rareDroptable []Drop, uncommonDroptable []Dro
 		// We split up the interval: [0, sum) = rare, [sum, sum+1/128) = Hilt chance, [sum+1/128,sum+1/128+1/128) = Shard chance,
 		// [sum+1/128+1/128, sum+1/128+1/128+uncommonrate) = uncommon, [sum+1/128+1/128+uncommonrate,1) = common
 		if roll < sum {
-			drop = rareDroptable[rand.Intn(len(rareDroptable))]
+			drop = determineDropWithRates(rand.Float64(), &rareDroptable)
 		} else if roll < sum+1.0/128.0 { // Hilt chance
 			if rand.Float64() < 1.0/4.0 {
 				drop = hilt

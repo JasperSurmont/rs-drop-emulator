@@ -154,7 +154,7 @@ func Kril(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	drops := EmulateDropGwd1(amount, krilRareDroptable, krilUncommonDroptable, krilCommonDroptable, bandosHilt)
+	drops := emulateDropGwd1(amount, krilRareDroptable, krilUncommonDroptable, krilCommonDroptable, bandosHilt)
 	if enableGuarantees := GetOptionWithName(i.ApplicationCommandData().Options, "enable-guarantees"); enableGuarantees.Name == "" || enableGuarantees.BoolValue() {
 		AddAlwaysDroptable(amount, &drops, krilAlwaysDroptable)
 	}

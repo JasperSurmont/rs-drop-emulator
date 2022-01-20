@@ -150,7 +150,7 @@ func Kreearra(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	drops := EmulateDropGwd1(amount, kreearraRareDroptable, kreearraUncommonDroptable, kreearraCommonDroptable, aramadylHilt)
+	drops := emulateDropGwd1(amount, kreearraRareDroptable, kreearraUncommonDroptable, kreearraCommonDroptable, aramadylHilt)
 	if enableGuarantees := GetOptionWithName(i.ApplicationCommandData().Options, "enable-guarantees"); enableGuarantees.Name == "" || enableGuarantees.BoolValue() {
 		AddAlwaysDroptable(amount, &drops, kreearraAlwaysDroptable)
 	}

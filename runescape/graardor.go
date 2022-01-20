@@ -141,7 +141,7 @@ func Graardor(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	drops := EmulateDropGwd1(amount, graardorRareDroptable, graardorUncommonDroptable, graardorCommonDroptable, bandosHilt)
+	drops := emulateDropGwd1(amount, graardorRareDroptable, graardorUncommonDroptable, graardorCommonDroptable, bandosHilt)
 	if enableGuarantees := GetOptionWithName(i.ApplicationCommandData().Options, "enable-guarantees"); enableGuarantees.Name == "" || enableGuarantees.BoolValue() {
 		AddAlwaysDroptable(amount, &drops, graardorAlwaysDroptable)
 	}

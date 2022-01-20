@@ -143,7 +143,7 @@ func Twinfuries(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	drops := EmulateDropGwd2(amount, twinfuriesRareDroptable, twinfuriesUncommonDroptable, twinfuriesCommonDroptable)
+	drops := emulateDropGwd2(amount, twinfuriesRareDroptable, twinfuriesUncommonDroptable, twinfuriesCommonDroptable)
 	if enableGuarantees := GetOptionWithName(i.ApplicationCommandData().Options, "enable-guarantees"); enableGuarantees.Name == "" || enableGuarantees.BoolValue() {
 		AddAlwaysDroptable(amount, &drops, twinfuriesAlwaysDroptable)
 	}

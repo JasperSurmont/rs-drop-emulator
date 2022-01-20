@@ -148,7 +148,7 @@ func Helwyr(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	drops := EmulateDropGwd2(amount, helwyrRareDroptable, helwyrUncommonDroptable, helwyrCommonDroptable)
+	drops := emulateDropGwd2(amount, helwyrRareDroptable, helwyrUncommonDroptable, helwyrCommonDroptable)
 	if enableGuarantees := GetOptionWithName(i.ApplicationCommandData().Options, "enable-guarantees"); enableGuarantees.Name == "" || enableGuarantees.BoolValue() {
 		AddAlwaysDroptable(amount, &drops, helwyrAlwaysDroptable)
 	}

@@ -55,10 +55,10 @@ func (l wrappedLogger) Info(msg ...interface{}) {
 
 func (l wrappedLogger) Infow(msg string, values ...interface{}) {
 	if l.dev {
-		l.base.Infow(msg, values)
+		l.base.Infow(msg, values...)
 		return
 	}
-	var newValues []zap.Field
+	var newValues []interface{}
 	for i := 0; i < len(values)-1; i += 2 {
 		newValues = append(newValues, zd.Label(fmt.Sprint(values[i]), fmt.Sprint(values[i+1])))
 	}
@@ -75,10 +75,10 @@ func (l wrappedLogger) Error(msg ...interface{}) {
 
 func (l wrappedLogger) Errorw(msg string, values ...interface{}) {
 	if l.dev {
-		l.base.Errorw(msg, values)
+		l.base.Errorw(msg, values...)
 		return
 	}
-	var newValues []zap.Field
+	var newValues []interface{}
 	for i := 0; i < len(values)-1; i += 2 {
 		newValues = append(newValues, zd.Label(fmt.Sprint(values[i]), fmt.Sprint(values[i+1])))
 	}
@@ -95,10 +95,10 @@ func (l wrappedLogger) Debug(msg ...interface{}) {
 
 func (l wrappedLogger) Debugw(msg string, values ...interface{}) {
 	if l.dev {
-		l.base.Debugw(msg, values)
+		l.base.Debugw(msg, values...)
 		return
 	}
-	var newValues []zap.Field
+	var newValues []interface{}
 	for i := 0; i < len(values)-1; i += 2 {
 		newValues = append(newValues, zd.Label(fmt.Sprint(values[i]), fmt.Sprint(values[i+1])))
 	}
@@ -115,10 +115,10 @@ func (l wrappedLogger) Warn(msg ...interface{}) {
 
 func (l wrappedLogger) Warnw(msg string, values ...interface{}) {
 	if l.dev {
-		l.base.Warnw(msg, values)
+		l.base.Warnw(msg, values...)
 		return
 	}
-	var newValues []zap.Field
+	var newValues []interface{}
 	for i := 0; i < len(values); i++ {
 		newValues = append(newValues, zd.Label(fmt.Sprint(values[i]), fmt.Sprint(values[i+1])))
 	}
@@ -135,14 +135,14 @@ func (l wrappedLogger) Fatal(msg ...interface{}) {
 
 func (l wrappedLogger) Fatalw(msg string, values ...interface{}) {
 	if l.dev {
-		l.base.Fatalw(msg, values)
+		l.base.Fatalw(msg, values...)
 		return
 	}
-	var newValues []zap.Field
+	var newValues []interface{}
 	for i := 0; i < len(values)-1; i += 2 {
 		newValues = append(newValues, zd.Label(fmt.Sprint(values[i]), fmt.Sprint(values[i+1])))
 	}
-	l.base.Fatalw(msg, newValues)
+	l.base.Fatalw(msg, newValues...)
 }
 
 func (l wrappedLogger) Fatalf(template string, values ...interface{}) {

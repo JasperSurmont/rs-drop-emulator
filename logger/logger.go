@@ -58,11 +58,11 @@ func (l wrappedLogger) Infow(msg string, values ...interface{}) {
 		l.base.Infow(msg, values...)
 		return
 	}
-	var newValues []interface{}
+	var newValues []zap.Field
 	for i := 0; i < len(values)-1; i += 2 {
 		newValues = append(newValues, zd.Label(fmt.Sprint(values[i]), fmt.Sprint(values[i+1])))
 	}
-	l.base.Infow(msg, newValues)
+	l.base.Info(msg, newValues)
 }
 
 func (l wrappedLogger) Infof(template string, values ...interface{}) {
@@ -75,14 +75,14 @@ func (l wrappedLogger) Error(msg ...interface{}) {
 
 func (l wrappedLogger) Errorw(msg string, values ...interface{}) {
 	if l.dev {
-		l.base.Errorw(msg, values...)
+		l.base.Error(msg, values)
 		return
 	}
-	var newValues []interface{}
+	var newValues []zap.Field
 	for i := 0; i < len(values)-1; i += 2 {
 		newValues = append(newValues, zd.Label(fmt.Sprint(values[i]), fmt.Sprint(values[i+1])))
 	}
-	l.base.Errorw(msg, newValues)
+	l.base.Error(msg, newValues)
 }
 
 func (l wrappedLogger) Errorf(template string, values ...interface{}) {
@@ -98,11 +98,11 @@ func (l wrappedLogger) Debugw(msg string, values ...interface{}) {
 		l.base.Debugw(msg, values...)
 		return
 	}
-	var newValues []interface{}
+	var newValues []zap.Field
 	for i := 0; i < len(values)-1; i += 2 {
 		newValues = append(newValues, zd.Label(fmt.Sprint(values[i]), fmt.Sprint(values[i+1])))
 	}
-	l.base.Debugw(msg, newValues)
+	l.base.Debug(msg, newValues)
 }
 
 func (l wrappedLogger) Debugf(template string, values ...interface{}) {
@@ -118,11 +118,11 @@ func (l wrappedLogger) Warnw(msg string, values ...interface{}) {
 		l.base.Warnw(msg, values...)
 		return
 	}
-	var newValues []interface{}
+	var newValues []zap.Field
 	for i := 0; i < len(values); i++ {
 		newValues = append(newValues, zd.Label(fmt.Sprint(values[i]), fmt.Sprint(values[i+1])))
 	}
-	l.base.Warnw(msg, newValues)
+	l.base.Warn(msg, newValues)
 }
 
 func (l wrappedLogger) Warnf(template string, values ...interface{}) {
@@ -138,11 +138,11 @@ func (l wrappedLogger) Fatalw(msg string, values ...interface{}) {
 		l.base.Fatalw(msg, values...)
 		return
 	}
-	var newValues []interface{}
+	var newValues []zap.Field
 	for i := 0; i < len(values)-1; i += 2 {
 		newValues = append(newValues, zd.Label(fmt.Sprint(values[i]), fmt.Sprint(values[i+1])))
 	}
-	l.base.Fatalw(msg, newValues...)
+	l.base.Fatal(msg, newValues)
 }
 
 func (l wrappedLogger) Fatalf(template string, values ...interface{}) {

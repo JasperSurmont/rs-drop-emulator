@@ -30,7 +30,13 @@ Interacting with the RS Api and cache (to get the GE Prices) is specified in [ut
 
 ## TODO
 
-- Fix rare droprate with rares being not equal
+### General
+
+- Make discord icon
+- _Make website?_
+
+### Code
+
 - More tests
 - Rare drop table
 - Add option for uniques only

@@ -5,26 +5,28 @@ The goal is that the user can input a variety of variables that have an influenc
 
 ## Currently implemented bosses
 
-- [Giant Mole]('./runescape/beasts/giantmole.go)
-- [Vorago]('./runescape/beasts/vorago.go)
+- [Giant Mole]('./giantmole.go)
+- [Vorago]('./vorago.go)
 
 All GWD1 bosses:
-- [K'ril](./runescape/beasts/kril.go)
-- [Graardor](./runescape/beasts/graardor.go)
-- [Kree'arra](./runescape/beasts/kreearra.go)
-- [Zilyana](./runescape/beasts/zilyana.go)
+- [K'ril](./kril.go)
+- [Graardor](./graardor.go)
+- [Kree'arra](./kreearra.go)
+- [Zilyana](./zilyana.go)
+- [Nex](./nex.go)
 
-All GWD2 bosses:
-- [Vindicta](./runescape/beasts/vindicta.go)
-- [Helwyr](./runescape/beasts/helwyr.go)
-- [Gregorovic](./runescape/beasts/gregorovic.go)
-- [Twin Furies](./runescape/beasts/twinfuries.go)
+All GWD2 bosses (except telos):
+- [Vindicta](./vindicta.go)
+- [Helwyr](./helwyr.go)
+- [Gregorovic](./gregorovic.go)
+- [Twin Furies](./twinfuries.go)
 
 ## Project structure
 
-Entry point is in [main.go](./main.go). It loads all the application commands found in [beasts](./runescape/beasts) and [general](./general) and starts the bot.
+Entry point is in [main.go](./main.go). It loads all the application commands and starts the bot.
 
-In [beasts](./runescape/beasts), every file has a similar structure specifying the droptables, and emulating the drop. Since a lot of the drop mechanisms are repeated throughout the game, we generalize some of them in [core](./runescape/core). There we have all sorts of useful functions in [general](./runescape/core/general.go) and more specific ones in files like [gwd1](./runescape/core/gwd1.go).
+Every boss has its own file (eg [Vindicta](./vindicta.go)), but sometimes common drop mechanisms are grouped (eg [Gwd1](./gwd1.go)).
+Maybe if this gets too messy to put everything in the root we can try to put it in different packages.
 
 Interacting with the RS Api and cache (to get the GE Prices) is specified in [util]('./runescape/util). Because the RS API is very unstable and not really trustworthy, it's important that when any change happens, it is first tested using [rsapi_test]('./runescape/util/rsapi_test.go).
 

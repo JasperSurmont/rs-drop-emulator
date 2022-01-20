@@ -1,4 +1,4 @@
-package runescape
+package main
 
 import (
 	"fmt"
@@ -7,118 +7,116 @@ import (
 )
 
 var (
-	zilyanaUrl             = "https://runescape.wiki/images/General_Graardor.png?c6b33"
-	zilyanaCommonDroptable = []Drop{
+	kreearraUrl             = "https://runescape.wiki/images/Kree%27arra.png?fcdb7"
+	kreearraCommonDroptable = []Drop{
 		{
-			Name:   "Grimy ranarr",
-			Amount: 5,
+			Name:   "Small spiky rune salvage",
+			Amount: 1,
 		},
 		{
-			Name:   "Ranarr seed",
-			Amount: 2,
+			Name:        "Rune bolts",
+			AmountRange: [2]int{18, 25},
 		},
 		{
-			Name:        "Rune dart",
-			AmountRange: [2]int{30, 40},
+			Name:        "Rune arrow",
+			AmountRange: [2]int{100, 105},
 		},
 		{
-			Name:   "Large plated rune salvage",
+			Name:   "Black dragonhide body",
 			Amount: 1,
 		},
 	}
-	zilyanaUncommonDroptable = []Drop{
+	kreearraUncommonDroptable = []Drop{
 		{
-			Name:   "Diamond",
-			Amount: 6,
+			Name:   "Medium bladed rune salvage",
+			Amount: 1,
 		},
 		{
-			Name:   "Prayer potion (4)",
-			Amount: 3,
+			Name:        "Dragon bolts (e)",
+			AmountRange: [2]int{2, 15},
 		},
 		{
-			Name:   "Saradomin brew (3)",
+			Name:        "Grimy dwarf weed",
+			AmountRange: [2]int{5, 22},
+		},
+		{
+			Name:   "Super ranging potion (3)",
 			Amount: 3,
 			OtherDrops: []Drop{
 				{
-					Name:   "Super restore (4)",
+					Name:   "Super defence (3)",
 					Amount: 3,
 				},
 			},
 		},
 		{
-			Name:   "Super defence (3)",
+			Name:   "Dwarf weed seed",
 			Amount: 3,
-			OtherDrops: []Drop{
-				{
-					Name:   "Super magic potion (3)",
-					Amount: 3,
-				},
-			},
 		},
 		{
-			Name:        "Unicorn horn",
-			AmountRange: [2]int{5, 10},
+			Name:        "Crushed nest",
+			AmountRange: [2]int{12, 15},
 		},
 		{
-			Name:   "Battlestaff",
-			Amount: 2,
-		},
-		{
-			Name:   "Huge plated adamant salvage",
+			Name:   "Crystal key",
 			Amount: 1,
 		},
 		{
-			Name:   "Magic seed",
+			Name:   "Yew seed",
 			Amount: 1,
 		},
 	}
-	zilyanaRareDroptable = []Drop{
+	kreearraRareDroptable = []Drop{
 		{
-			Name: "Saradomin sword",
+			Name: "Armadyl helmet",
 			Rate: 1.0 / 384.0,
 			Bold: true,
 		},
 		{
-			Name: "Armadyl crossbow",
-			Rate: 1.0 / 768.0,
-			Bold: true,
-		},
-		{
-			Name: "Off-hand Armadyl crossbow",
-			Rate: 1.0 / 768.0,
-			Bold: true,
-		},
-		{
-			Name: "Saradomin's murmur",
+			Name: "Armadyl chestplate",
 			Rate: 1.0 / 384.0,
 			Bold: true,
 		},
 		{
-			Name: "Saradomin's hiss",
+			Name: "Armadyl chainskirt",
 			Rate: 1.0 / 384.0,
 			Bold: true,
 		},
 		{
-			Name: "Saradomin's whisper",
+			Name: "Armadyl gloves",
+			Rate: 1.0 / 384.0,
+			Bold: true,
+		},
+		{
+			Name: "Armadyl boots",
+			Rate: 1.0 / 384.0,
+			Bold: true,
+		},
+		{
+			Name: "Armadyl buckler",
 			Rate: 1.0 / 384.0,
 			Bold: true,
 		},
 	}
-	saradominHilt = Drop{
-		Name:   "Saradomin hilt",
+	aramadylHilt = Drop{
+		Name:   "Armadyl hilt",
 		Amount: 1,
 	}
-	zilyanaAlwaysDroptable = []Drop{
+	kreearraAlwaysDroptable = []Drop{
 		{
-			Name:   "Bones",
+			Name:   "Big bones",
 			Amount: 1,
+		},
+		{
+			Name:        "Feather",
+			AmountRange: [2]int{1, 15},
 		},
 	}
 )
 
-var ZilyanaCommand = &discordgo.ApplicationCommand{
-	Name:        "zilyana",
-	Description: "Emulate a Command Zilyana drop",
+var KreearraCommand = &discordgo.ApplicationCommand{
+	Name:        "kreearra",
+	Description: "Emulate a Command Kreearra drop",
 	Options: []*discordgo.ApplicationCommandOption{
 		{
 			Type:        discordgo.ApplicationCommandOptionInteger,
@@ -135,7 +133,7 @@ var ZilyanaCommand = &discordgo.ApplicationCommand{
 	},
 }
 
-func Zilyana(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func Kreearra(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	var amount int64 = 1
 	if amountOpt := GetOptionWithName(i.ApplicationCommandData().Options, "amount"); amountOpt.Name != "" {
 		amount = amountOpt.IntValue()
@@ -152,9 +150,9 @@ func Zilyana(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	drops := emulateDropGwd1(amount, zilyanaRareDroptable, zilyanaUncommonDroptable, zilyanaCommonDroptable, saradominHilt)
+	drops := emulateDropGwd1(amount, kreearraRareDroptable, kreearraUncommonDroptable, kreearraCommonDroptable, aramadylHilt)
 	if enableGuarantees := GetOptionWithName(i.ApplicationCommandData().Options, "enable-guarantees"); enableGuarantees.Name == "" || enableGuarantees.BoolValue() {
-		AddAlwaysDroptable(amount, &drops, zilyanaAlwaysDroptable)
+		AddAlwaysDroptable(amount, &drops, kreearraAlwaysDroptable)
 	}
 
 	dropWithPrice, total, ok := AmountToPrice(drops)
@@ -163,7 +161,7 @@ func Zilyana(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	embed := discordgo.MessageEmbed{
 		Thumbnail: &discordgo.MessageEmbedThumbnail{
-			URL: zilyanaUrl,
+			URL: kreearraUrl,
 		},
 		Title:       fmt.Sprintf("You killed General Graardor %v times and you got:", amount),
 		Description: content,
@@ -175,5 +173,6 @@ func Zilyana(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			Embeds: []*discordgo.MessageEmbed{&embed},
 		},
 	})
-	log.Info("command executed", "command", ZilyanaCommand.Name)
+	log.Info("command executed", "command", KreearraCommand.Name)
+
 }

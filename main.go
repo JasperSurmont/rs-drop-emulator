@@ -6,9 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/jaspersurmont/rs-drop-emulator/general"
 	"github.com/jaspersurmont/rs-drop-emulator/logger"
-	"github.com/jaspersurmont/rs-drop-emulator/runescape"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
@@ -18,34 +16,34 @@ var (
 	log      logger.LoggerWrapper
 	discord  *discordgo.Session
 	commands = []*discordgo.ApplicationCommand{
-		runescape.GiantMoleCommand,
-		runescape.ZilyanaCommand,
-		runescape.GraardorCommand,
-		runescape.KreearraCommand,
-		runescape.KrilCommand,
-		runescape.NexCommand,
-		runescape.VindictaCommand,
-		runescape.HelwyrCommand,
-		runescape.TwinfuriesCommand,
-		runescape.GregorovicCommand,
-		runescape.VoragoCommand,
-		general.HelpCommand,
-		general.ContributeCommand,
+		GiantMoleCommand,
+		ZilyanaCommand,
+		GraardorCommand,
+		KreearraCommand,
+		KrilCommand,
+		NexCommand,
+		VindictaCommand,
+		HelwyrCommand,
+		TwinfuriesCommand,
+		GregorovicCommand,
+		VoragoCommand,
+		HelpCommand,
+		ContributeCommand,
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		"giantmole":  runescape.GiantMole,
-		"graardor":   runescape.Graardor,
-		"zilyana":    runescape.Zilyana,
-		"kreearra":   runescape.Kreearra,
-		"kril":       runescape.Kril,
-		"nex":        runescape.Nex,
-		"vindicta":   runescape.Vindicta,
-		"helwyr":     runescape.Helwyr,
-		"twinfuries": runescape.Twinfuries,
-		"gregorovic": runescape.Gregorovic,
-		"vorago":     runescape.Vorago,
-		"help":       general.Help,
-		"contribute": general.Contribute,
+		"giantmole":  GiantMole,
+		"graardor":   Graardor,
+		"zilyana":    Zilyana,
+		"kreearra":   Kreearra,
+		"kril":       Kril,
+		"nex":        Nex,
+		"vindicta":   Vindicta,
+		"helwyr":     Helwyr,
+		"twinfuries": Twinfuries,
+		"gregorovic": Gregorovic,
+		"vorago":     Vorago,
+		"help":       Help,
+		"contribute": Contribute,
 	}
 	botToken string
 )

@@ -1,4 +1,4 @@
-package runescape
+package main
 
 import "math/rand"
 

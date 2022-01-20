@@ -1,4 +1,4 @@
-package runescape
+package main
 
 import (
 	"fmt"
@@ -7,8 +7,8 @@ import (
 )
 
 var (
-	vindictaUrl             = "https://runescape.wiki/images/Vindicta.png?41b58"
-	vindictaCommonDroptable = []Drop{
+	twinfuriesUrl             = "https://runescape.wiki/images/Nymora%2C_the_Vengeful.png?230f1"
+	twinfuriesCommonDroptable = []Drop{
 		{
 			Name:        "Drakolith stone spirit",
 			AmountRange: [2]int{15, 25},
@@ -31,9 +31,13 @@ var (
 		},
 	}
 
-	vindictaUncommonDroptable = []Drop{
+	twinfuriesUncommonDroptable = []Drop{
 		{
 			Name:        "Phasmatite stone spirit",
+			AmountRange: [2]int{15, 25},
+		},
+		{
+			Name:        "Necrite stone spirit",
 			AmountRange: [2]int{15, 25},
 		},
 		{
@@ -49,20 +53,20 @@ var (
 			AmountRange: [2]int{150, 250},
 		},
 		{
-			Name:        "Large plated rune salvage",
-			AmountRange: [2]int{8, 15},
+			Name:        "Large bladed rune salvage",
+			AmountRange: [2]int{5, 10},
 		},
 		{
-			Name:        "Dragon bones",
-			AmountRange: [2]int{150, 250},
+			Name:        "Wine of Zamorak",
+			AmountRange: [2]int{18, 22},
 		},
 		{
-			Name:        "Black dragonhide",
-			AmountRange: [2]int{25, 44},
+			Name:        "Infernal ashes",
+			AmountRange: [2]int{150, 249},
 		},
 	}
 
-	vindictaRareDroptable = []Drop{
+	twinfuriesRareDroptable = []Drop{
 		{
 			Rate: 1.0 / 256.0,
 			Name: "Dormant anima core helm",
@@ -80,32 +84,32 @@ var (
 		},
 		{
 			Rate: 1.0 / 256.0,
-			Name: "Dragon Rider lance",
+			Name: "Orb of the Cywir elders",
 			Bold: true,
 		},
 		{
 			Rate: 1.0 / 256.0,
-			Name: "Crest of Zaros",
+			Name: "Blade of Avaryss",
 			Bold: true,
 		},
 		{
 			Rate: 1.0 / 256.0,
-			Name: "Zarosian essence",
+			Name: "Blade of Nymora",
+			Bold: true,
+		},
+		{
+			Rate: 1.0 / 64.0,
+			Name: "Zamorakian essence",
 			Bold: true,
 		},
 	}
 
-	vindictaAlwaysDroptable = []Drop{
-		{
-			Name:   "Dragon bones",
-			Amount: 1,
-		},
-	}
+	twinfuriesAlwaysDroptable = []Drop{}
 )
 
-var VindictaCommand = &discordgo.ApplicationCommand{
-	Name:        "vindicta",
-	Description: "Emulate a vindicta drop with full reputation",
+var TwinfuriesCommand = &discordgo.ApplicationCommand{
+	Name:        "twinfuries",
+	Description: "Emulate a Twin Furies drop with full reputation",
 	Options: []*discordgo.ApplicationCommandOption{
 		{
 			Type:        discordgo.ApplicationCommandOptionInteger,
@@ -122,7 +126,7 @@ var VindictaCommand = &discordgo.ApplicationCommand{
 	},
 }
 
-func Vindicta(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func Twinfuries(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	var amount int64 = 1
 	if amountOpt := GetOptionWithName(i.ApplicationCommandData().Options, "amount"); amountOpt.Name != "" {
 		amount = amountOpt.IntValue()
@@ -139,9 +143,9 @@ func Vindicta(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	drops := emulateDropGwd2(amount, vindictaRareDroptable, vindictaUncommonDroptable, vindictaCommonDroptable)
+	drops := emulateDropGwd2(amount, twinfuriesRareDroptable, twinfuriesUncommonDroptable, twinfuriesCommonDroptable)
 	if enableGuarantees := GetOptionWithName(i.ApplicationCommandData().Options, "enable-guarantees"); enableGuarantees.Name == "" || enableGuarantees.BoolValue() {
-		AddAlwaysDroptable(amount, &drops, vindictaAlwaysDroptable)
+		AddAlwaysDroptable(amount, &drops, twinfuriesAlwaysDroptable)
 	}
 
 	dropWithPrice, total, ok := AmountToPrice(drops)
@@ -150,9 +154,9 @@ func Vindicta(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	embed := discordgo.MessageEmbed{
 		Thumbnail: &discordgo.MessageEmbedThumbnail{
-			URL: vindictaUrl,
+			URL: twinfuriesUrl,
 		},
-		Title:       fmt.Sprintf("You killed vindicta %v times and you got:", amount),
+		Title:       fmt.Sprintf("You killed the Twin Furies %v times and you got:", amount),
 		Description: content,
 	}
 
@@ -162,5 +166,5 @@ func Vindicta(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			Embeds: []*discordgo.MessageEmbed{&embed},
 		},
 	})
-	log.Info("command executed", "command", VindictaCommand.Name)
+	log.Info("command executed", "command", TwinfuriesCommand.Name)
 }

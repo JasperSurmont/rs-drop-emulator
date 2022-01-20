@@ -1,4 +1,4 @@
-package runescape
+package main
 
 import (
 	"fmt"
@@ -7,120 +7,118 @@ import (
 )
 
 var (
-	krilUrl             = "https://runescape.wiki/images/K%27ril_Tsutsaroth.png?11873"
-	krilCommonDroptable = []Drop{
+	zilyanaUrl             = "https://runescape.wiki/images/General_Graardor.png?c6b33"
+	zilyanaCommonDroptable = []Drop{
 		{
-			Name:   "Infernal ashes",
+			Name:   "Grimy ranarr",
 			Amount: 5,
 		},
 		{
-			Name:   "Medium bladed rune salvage",
-			Amount: 1,
+			Name:   "Ranarr seed",
+			Amount: 2,
+		},
+		{
+			Name:        "Rune dart",
+			AmountRange: [2]int{30, 40},
 		},
 		{
 			Name:   "Large plated rune salvage",
 			Amount: 1,
+		},
+	}
+	zilyanaUncommonDroptable = []Drop{
+		{
+			Name:   "Diamond",
+			Amount: 6,
+		},
+		{
+			Name:   "Prayer potion (4)",
+			Amount: 3,
+		},
+		{
+			Name:   "Saradomin brew (3)",
+			Amount: 3,
+			OtherDrops: []Drop{
+				{
+					Name:   "Super restore (4)",
+					Amount: 3,
+				},
+			},
+		},
+		{
+			Name:   "Super defence (3)",
+			Amount: 3,
+			OtherDrops: []Drop{
+				{
+					Name:   "Super magic potion (3)",
+					Amount: 3,
+				},
+			},
+		},
+		{
+			Name:        "Unicorn horn",
+			AmountRange: [2]int{5, 10},
+		},
+		{
+			Name:   "Battlestaff",
+			Amount: 2,
 		},
 		{
 			Name:   "Huge plated adamant salvage",
 			Amount: 1,
 		},
 		{
-			Name:   "Super attack (3)",
-			Amount: 3,
-			OtherDrops: []Drop{
-				{
-					Name:   "Super strength (3)",
-					Amount: 3,
-				},
-			},
-		},
-		{
-			Name:   "Super restore (3)",
+			Name:   "Magic seed",
 			Amount: 1,
-			OtherDrops: []Drop{
-				{
-					Name:   "Zamorak brew (3)",
-					Amount: 3,
-				},
-			},
 		},
 	}
-	krilUncommonDroptable = []Drop{
+	zilyanaRareDroptable = []Drop{
 		{
-			Name:   "Lantadyme seed",
-			Amount: 3,
-		},
-		{
-			Name:   "Grimy lantadyme",
-			Amount: 10,
-		},
-		{
-			Name:   "Orichalcite stone spirit",
-			Amount: 3,
-		},
-		{
-			Name:        "Wine of Zamorak",
-			AmountRange: [2]int{2, 10},
-		},
-	}
-	krilRareDroptable = []Drop{
-		{
-			Name: "Hood of subjugation",
-			Rate: 1.0 / 512.0,
+			Name: "Saradomin sword",
+			Rate: 1.0 / 384.0,
 			Bold: true,
 		},
 		{
-			Name: "Garb of subjugation",
-			Rate: 1.0 / 512.0,
+			Name: "Armadyl crossbow",
+			Rate: 1.0 / 768.0,
 			Bold: true,
 		},
 		{
-			Name: "Gown of subjugation",
-			Rate: 1.0 / 512.0,
+			Name: "Off-hand Armadyl crossbow",
+			Rate: 1.0 / 768.0,
 			Bold: true,
 		},
 		{
-			Name: "Gloves of subjugation",
-			Rate: 1.0 / 512.0,
+			Name: "Saradomin's murmur",
+			Rate: 1.0 / 384.0,
 			Bold: true,
 		},
 		{
-			Name: "Boots of subjugation",
-			Rate: 1.0 / 512.0,
+			Name: "Saradomin's hiss",
+			Rate: 1.0 / 384.0,
 			Bold: true,
 		},
 		{
-			Name: "Ward of subjugation",
-			Rate: 1.0 / 512.0,
-			Bold: true,
-		},
-		{
-			Name: "Zamorakian spear",
-			Rate: 1.0 / 512.0,
-			Bold: true,
-		},
-		{
-			Name: "Steam battlestaff",
-			Rate: 1.0 / 512.0,
+			Name: "Saradomin's whisper",
+			Rate: 1.0 / 384.0,
 			Bold: true,
 		},
 	}
-	zamorakHilt = Drop{
-		Name:   "Zamorak hilt",
+	saradominHilt = Drop{
+		Name:   "Saradomin hilt",
 		Amount: 1,
 	}
-	krilAlwaysDroptable = []Drop{
+	zilyanaAlwaysDroptable = []Drop{
 		{
-			Name:   "Infernal ashes",
+			Name:   "Bones",
 			Amount: 1,
 		},
 	}
 )
 
-var KrilCommand = &discordgo.ApplicationCommand{
-	Name:        "kril",
-	Description: "Emulate a General Kril drop",
+var ZilyanaCommand = &discordgo.ApplicationCommand{
+	Name:        "zilyana",
+	Description: "Emulate a Command Zilyana drop",
 	Options: []*discordgo.ApplicationCommandOption{
 		{
 			Type:        discordgo.ApplicationCommandOptionInteger,
@@ -137,7 +135,7 @@ var KrilCommand = &discordgo.ApplicationCommand{
 	},
 }
 
-func Kril(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func Zilyana(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	var amount int64 = 1
 	if amountOpt := GetOptionWithName(i.ApplicationCommandData().Options, "amount"); amountOpt.Name != "" {
 		amount = amountOpt.IntValue()
@@ -154,9 +152,9 @@ func Kril(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		return
 	}
 
-	drops := emulateDropGwd1(amount, krilRareDroptable, krilUncommonDroptable, krilCommonDroptable, bandosHilt)
+	drops := emulateDropGwd1(amount, zilyanaRareDroptable, zilyanaUncommonDroptable, zilyanaCommonDroptable, saradominHilt)
 	if enableGuarantees := GetOptionWithName(i.ApplicationCommandData().Options, "enable-guarantees"); enableGuarantees.Name == "" || enableGuarantees.BoolValue() {
-		AddAlwaysDroptable(amount, &drops, krilAlwaysDroptable)
+		AddAlwaysDroptable(amount, &drops, zilyanaAlwaysDroptable)
 	}
 
 	dropWithPrice, total, ok := AmountToPrice(drops)
@@ -165,9 +163,9 @@ func Kril(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	embed := discordgo.MessageEmbed{
 		Thumbnail: &discordgo.MessageEmbedThumbnail{
-			URL: krilUrl,
+			URL: zilyanaUrl,
 		},
-		Title:       fmt.Sprintf("You killed General Kril %v times and you got:", amount),
+		Title:       fmt.Sprintf("You killed General Graardor %v times and you got:", amount),
 		Description: content,
 	}
 
@@ -177,6 +175,5 @@ func Kril(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			Embeds: []*discordgo.MessageEmbed{&embed},
 		},
 	})
-	log.Info("command executed", "command", KrilCommand.Name)
-
+	log.Info("command executed", "command", ZilyanaCommand.Name)
 }

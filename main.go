@@ -10,6 +10,7 @@ import (
 	"github.com/jaspersurmont/rs-drop-emulator/general"
 	"github.com/jaspersurmont/rs-drop-emulator/runescape"
 
+	"github.com/blendle/zapdriver"
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
@@ -100,7 +101,9 @@ func startBot() {
 		}
 	}
 
-	log.Info("Bot succesfully started up and listening")
+	log.Infow("Bot succesfully started up and listening",
+		zapdriver.Label("env", env),
+	)
 
 	// Await termination
 	sc := make(chan os.Signal, 1)
@@ -118,7 +121,7 @@ func configLogger() {
 	env := os.Getenv("RS_DROP_EMULATOR_ENV")
 
 	if env == "PROD" {
-		logger, err = zap.NewProduction()
+		logger, err = zapdriver.NewProduction()
 	} else {
 		logger, err = zap.NewDevelopment()
 	}

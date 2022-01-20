@@ -3,6 +3,7 @@ module github.com/jaspersurmont/rs-drop-emulator
 go 1.17
 
 require (
+	github.com/blendle/zapdriver v1.3.1
 	github.com/bwmarrin/discordgo v0.23.3-0.20211228023845-29269347e820
 	github.com/joho/godotenv v1.4.0
 	go.uber.org/zap v1.20.0

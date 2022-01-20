@@ -3,6 +3,7 @@ package runescape
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -11,6 +12,8 @@ import (
 	"time"
 
 	_ "embed"
+
+	zd "github.com/blendle/zapdriver"
 )
 
 const DETAIL_URL = "https://services.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item="
@@ -78,36 +81,36 @@ func GetItemPriceById(id int) (price RSPrice, err error) {
 			price = item.Price
 			return
 		} else {
-			log.Errorw("couldn't parse time from cache",
-				"id", id,
-				"item", item,
-				"err", err2,
+			log.Error("couldn't parse time from cache",
+				zd.Label("id", fmt.Sprint(id)),
+				zd.Label("time", item.LastUpdated),
+				zd.Label("err", err2.Error()),
 			)
 		}
 	}
 
 	res, err := http.Get(DETAIL_URL + strconv.Itoa(id))
 	if err != nil {
-		log.Errorw("request failed in GetItemPriceById",
-			"id", id,
-			"err", err,
+		log.Error("request failed in GetItemPriceById",
+			zd.Label("id", fmt.Sprint(id)),
+			zd.Label("err", err.Error()),
 		)
 		return
 	}
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		log.Errorw("could not read body in GetItemPriceById",
-			"id", id,
-			"err", err,
+		log.Error("could not read body in GetItemPriceById",
+			zd.Label("id", fmt.Sprint(id)),
+			zd.Label("err", err.Error()),
 		)
 		return
 	}
 
 	if res.StatusCode > 299 {
-		log.Errorw("invalid response in GetItemPriceById",
-			"id", id,
-			"statusCode", res.StatusCode,
+		log.Error("invalid response in GetItemPriceById",
+			zd.Label("id", fmt.Sprint(id)),
+			zd.Label("statusCode", fmt.Sprint(res.StatusCode)),
 		)
 		err = errors.New("invalid response in GetItemPriceById")
 		return
@@ -115,9 +118,9 @@ func GetItemPriceById(id int) (price RSPrice, err error) {
 
 	var detail DetailResponse
 	if err := json.Unmarshal(body, &detail); err != nil {
-		log.Errorw("couldn't unmarshal json to DetailResponse in GetItemPriceById",
-			"id", id,
-			"error", err,
+		log.Error("couldn't unmarshal json to DetailResponse in GetItemPriceById",
+			zd.Label("id", fmt.Sprint(id)),
+			zd.Label("error", err.Error()),
 		)
 	}
 	price = detail.Item.Current.Price

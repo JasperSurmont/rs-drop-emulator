@@ -117,7 +117,8 @@ func MakeDropList(n []NamedRSPrice, m map[string]*Drop, total RSPrice, ok bool) 
 	}
 	sb.WriteString(fmt.Sprintf("\n**Total GE value: %v**", total))
 	if !ok {
-		sb.WriteString("\nSomething went wrong; not all items were processed correctly.")
+		sb.WriteString("\nSomething went wrong; not all items were processed correctly.\n")
+		sb.WriteString("If this issue keeps happening please file an issue. See /contribute for more info")
 	}
 	return sb.String()
 }

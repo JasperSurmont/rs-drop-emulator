@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"runtime"
 
 	zd "github.com/blendle/zapdriver"
 	"go.uber.org/zap"
@@ -57,6 +58,7 @@ func wrapWithLabel(fields ...interface{}) []zap.Field {
 	for i := 0; i < len(fields)-1; i += 2 {
 		newValues = append(newValues, zd.Label(fmt.Sprint(fields[i]), fmt.Sprint(fields[i+1])))
 	}
+	newValues = append(newValues, zd.SourceLocation(runtime.Caller(2))) // Skip 2 cause there are 2 calls here
 	return newValues
 }
 

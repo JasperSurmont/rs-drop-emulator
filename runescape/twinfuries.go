@@ -166,5 +166,5 @@ func Twinfuries(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			Embeds: []*discordgo.MessageEmbed{&embed},
 		},
 	})
-	log.Infow("command executed", "command", TwinfuriesCommand.Name)
+	log.Info("command executed", "command", TwinfuriesCommand.Name)
 }

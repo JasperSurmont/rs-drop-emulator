@@ -203,7 +203,7 @@ func (p *RSPrice) Format() (err error) {
 	}
 
 	if err != nil {
-		log.Errorf("couldn't format rsprice %v.\n%v", p, err)
+		log.Error(fmt.Sprintf("couldn't format rsprice %v.%v", p, err))
 		return
 	}
 	switch order {
@@ -245,7 +245,7 @@ func (p *RSPrice) Multiply(x int) error {
 	}
 
 	if err != nil {
-		log.Errorf("couldn't format rsprice %v.\n%v", p, err)
+		log.Error(fmt.Sprintf("couldn't format rsprice %v.%v", p, err))
 		return err
 	}
 
@@ -293,7 +293,7 @@ func (p *RSPrice) UnmarshalJSON(b []byte) error {
 	if err := json.Unmarshal(b, &s); err != nil {
 		var i int
 		if err2 := json.Unmarshal(b, &i); err2 != nil {
-			return fmt.Errorf("failed to unmarshal rsprice:\n%v\n%v", err, err2)
+			return fmt.Errorf("failed to unmarshal rsprice:\n%v", err2)
 		}
 		*p = RSPrice(fmt.Sprintf("%v", i))
 		return nil

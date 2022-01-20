@@ -6,7 +6,6 @@ import (
 
 var log logger.LoggerWrapper
 
-// ConfigLogger gets called when the global logger has been set up correctly
 func init() {
 	log = logger.CreateLogger("runescape")
 }

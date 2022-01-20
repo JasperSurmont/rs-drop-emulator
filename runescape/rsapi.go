@@ -30,7 +30,7 @@ var initIdlistData []byte
 func init() {
 	err := json.Unmarshal(initIdlistData, &idList)
 	if err != nil {
-		log.Fatalf("couldn't unmarshal idlist into map, %v", err)
+		log.Fatal(fmt.Sprintf("couldn't unmarshal idlist into map, %v", err))
 	}
 }
 
@@ -57,7 +57,7 @@ func GetItemPrice(name string, ch chan<- NamedRSPrice, untradeable bool) {
 		ch <- NamedRSPrice{
 			Error: errors.New("name not found in idlist"),
 		}
-		log.Errorf("name not found in idlist %v", name)
+		log.Error("name not found in idlist ", "name", name)
 		return
 	}
 	price, err := GetItemPriceById(id)

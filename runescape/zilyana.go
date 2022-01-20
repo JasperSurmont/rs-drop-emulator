@@ -175,5 +175,5 @@ func Zilyana(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			Embeds: []*discordgo.MessageEmbed{&embed},
 		},
 	})
-	log.Infow("command executed", "command", ZilyanaCommand.Name)
+	log.Info("command executed", "command", ZilyanaCommand.Name)
 }

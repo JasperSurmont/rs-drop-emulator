@@ -2,6 +2,7 @@ package logger
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	zd "github.com/blendle/zapdriver"
@@ -12,141 +13,91 @@ func CreateLogger(name string) LoggerWrapper {
 	env := os.Getenv("RS_DROP_EMULATOR_ENV")
 
 	if env == "PROD" {
-		zl, _ := zd.NewProduction()
+		zl, err := zd.NewProductionWithCore(zd.WrapCore(
+			zd.ReportAllErrors(true),
+			zd.ServiceName("rs-drop-emulator"),
+		))
+
+		if err != nil {
+			log.Fatalf("couldn't configure logger: %v", err)
+		}
+
 		return &wrappedLogger{
-			base: zl.Sugar().Named(name),
-			dev:  false,
+			base:    zl,
+			sugared: zl.Sugar().Named(name),
+			dev:     false,
 		}
 	}
+
 	zl, _ := zap.NewDevelopment()
 	return &wrappedLogger{
-		base: zl.Sugar().Named(name),
-		dev:  true,
+		base:    zl,
+		sugared: zl.Sugar().Named(name),
+		dev:     true,
 	}
 }
 
 type LoggerWrapper interface {
-	Info(...interface{})
-	Infow(string, ...interface{})
-	Infof(string, ...interface{})
-	Debug(...interface{})
-	Debugw(string, ...interface{})
-	Debugf(string, ...interface{})
-	Error(...interface{})
-	Errorw(string, ...interface{})
-	Errorf(string, ...interface{})
-	Warn(...interface{})
-	Warnw(string, ...interface{})
-	Warnf(string, ...interface{})
-	Fatal(...interface{})
-	Fatalf(string, ...interface{})
-	Fatalw(string, ...interface{})
+	Info(string, ...interface{})
+	Debug(string, ...interface{})
+	Error(string, ...interface{})
+	Warn(string, ...interface{})
+	Fatal(string, ...interface{})
 	Sync()
 }
 
 type wrappedLogger struct {
-	base *zap.SugaredLogger
-	dev  bool
+	base    *zap.Logger
+	sugared *zap.SugaredLogger
+	dev     bool
 }
 
-func (l wrappedLogger) Info(msg ...interface{}) {
-	l.base.Info(msg)
-}
-
-func (l wrappedLogger) Infow(msg string, values ...interface{}) {
-	if l.dev {
-		l.base.Infow(msg, values...)
-		return
-	}
+func wrapWithLabel(fields ...interface{}) []zap.Field {
 	var newValues []zap.Field
-	for i := 0; i < len(values)-1; i += 2 {
-		newValues = append(newValues, zd.Label(fmt.Sprint(values[i]), fmt.Sprint(values[i+1])))
+	for i := 0; i < len(fields)-1; i += 2 {
+		newValues = append(newValues, zd.Label(fmt.Sprint(fields[i]), fmt.Sprint(fields[i+1])))
 	}
-	l.base.Info(msg, newValues)
+	return newValues
 }
 
-func (l wrappedLogger) Infof(template string, values ...interface{}) {
-	l.base.Infof(template, values)
-}
-
-func (l wrappedLogger) Error(msg ...interface{}) {
-	l.base.Error(msg)
-}
-
-func (l wrappedLogger) Errorw(msg string, values ...interface{}) {
+func (l wrappedLogger) Info(msg string, fields ...interface{}) {
 	if l.dev {
-		l.base.Error(msg, values)
-		return
+		l.sugared.Info(msg, fields)
+	} else {
+		l.base.Info(msg, wrapWithLabel(fields...)...)
 	}
-	var newValues []zap.Field
-	for i := 0; i < len(values)-1; i += 2 {
-		newValues = append(newValues, zd.Label(fmt.Sprint(values[i]), fmt.Sprint(values[i+1])))
-	}
-	l.base.Error(msg, newValues)
 }
 
-func (l wrappedLogger) Errorf(template string, values ...interface{}) {
-	l.base.Errorf(template, values)
-}
-
-func (l wrappedLogger) Debug(msg ...interface{}) {
-	l.base.Debug(msg)
-}
-
-func (l wrappedLogger) Debugw(msg string, values ...interface{}) {
+func (l wrappedLogger) Warn(msg string, fields ...interface{}) {
 	if l.dev {
-		l.base.Debugw(msg, values...)
-		return
+		l.sugared.Warnw(msg, fields)
+	} else {
+		l.base.Warn(msg, wrapWithLabel(fields...)...)
 	}
-	var newValues []zap.Field
-	for i := 0; i < len(values)-1; i += 2 {
-		newValues = append(newValues, zd.Label(fmt.Sprint(values[i]), fmt.Sprint(values[i+1])))
-	}
-	l.base.Debug(msg, newValues)
 }
 
-func (l wrappedLogger) Debugf(template string, values ...interface{}) {
-	l.base.Debugf(template, values)
-}
-
-func (l wrappedLogger) Warn(msg ...interface{}) {
-	l.base.Warn(msg)
-}
-
-func (l wrappedLogger) Warnw(msg string, values ...interface{}) {
+func (l wrappedLogger) Debug(msg string, fields ...interface{}) {
 	if l.dev {
-		l.base.Warnw(msg, values...)
-		return
+		l.sugared.Debugw(msg, fields)
+	} else {
+		l.base.Debug(msg, wrapWithLabel(fields...)...)
 	}
-	var newValues []zap.Field
-	for i := 0; i < len(values); i++ {
-		newValues = append(newValues, zd.Label(fmt.Sprint(values[i]), fmt.Sprint(values[i+1])))
-	}
-	l.base.Warn(msg, newValues)
 }
 
-func (l wrappedLogger) Warnf(template string, values ...interface{}) {
-	l.base.Warnf(template, values)
-}
-
-func (l wrappedLogger) Fatal(msg ...interface{}) {
-	l.base.Fatal(msg)
-}
-
-func (l wrappedLogger) Fatalw(msg string, values ...interface{}) {
+func (l wrappedLogger) Error(msg string, fields ...interface{}) {
 	if l.dev {
-		l.base.Fatalw(msg, values...)
-		return
+		l.sugared.Error(msg, fields)
+	} else {
+		l.base.Error(msg, wrapWithLabel(fields...)...)
 	}
-	var newValues []zap.Field
-	for i := 0; i < len(values)-1; i += 2 {
-		newValues = append(newValues, zd.Label(fmt.Sprint(values[i]), fmt.Sprint(values[i+1])))
-	}
-	l.base.Fatal(msg, newValues)
 }
 
-func (l wrappedLogger) Fatalf(template string, values ...interface{}) {
-	l.base.Fatalf(template, values)
+func (l wrappedLogger) Fatal(msg string, fields ...interface{}) {
+	if l.dev {
+		l.sugared.Fatal(msg, fields)
+	} else {
+		l.base.Fatal(msg, wrapWithLabel(fields...)...)
+	}
 }
 
 func (l wrappedLogger) Sync() {

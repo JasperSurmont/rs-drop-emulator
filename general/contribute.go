@@ -8,7 +8,7 @@ var ContributeCommand = &discordgo.ApplicationCommand{
 }
 
 func Contribute(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	log.Infow("command executed", "command", ContributeCommand.Name)
+	log.Info("command executed", "command", ContributeCommand.Name)
 	embed := discordgo.MessageEmbed{
 		Title: "Contribute",
 		Description: `This bot is open source with the [GPL-3.0 License](https://github.com/JasperSurmont/rs-drop-emulator/blob/main/LICENSE) on [GitHub](https://github.com/JasperSurmont/rs-drop-emulator).

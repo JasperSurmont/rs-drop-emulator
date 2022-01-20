@@ -59,7 +59,7 @@ func init() {
 	var err error
 	discord, err = discordgo.New(fmt.Sprintf("Bot %v", botToken))
 	if err != nil {
-		log.Fatalf("couldn't set up bot; %v", err)
+		log.Fatal(fmt.Sprintf("couldn't set up bot; %v", err))
 	}
 
 	discord.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
@@ -80,7 +80,7 @@ func main() {
 func startBot() {
 	err := discord.Open()
 	if err != nil {
-		log.Fatalf("error opening connection %v", err)
+		log.Fatal(fmt.Sprintf("error opening connection %v", err))
 	}
 
 	// Use guild only commands when testing, to propagate changes faster
@@ -93,7 +93,7 @@ func startBot() {
 	for _, v := range commands {
 		_, err := discord.ApplicationCommandCreate(discord.State.User.ID, guildId, v)
 		if err != nil {
-			log.Fatalf("cannot create '%v' command: %v", v.Name, err)
+			log.Fatal(fmt.Sprintf("cannot create '%v' command: %v", v.Name, err))
 		}
 	}
 
@@ -104,6 +104,6 @@ func startBot() {
 	signal.Notify(sc, syscall.SIGINT, os.Interrupt, syscall.SIGTERM)
 	s := <-sc
 
-	log.Infof("shutting down because with signal %v", s)
+	log.Info(fmt.Sprintf("shutting down because with signal %v", s))
 	discord.Close()
 }

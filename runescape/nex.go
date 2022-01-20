@@ -244,7 +244,7 @@ func Nex(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			Embeds: []*discordgo.MessageEmbed{&embed},
 		},
 	})
-	log.Infow("command executed", "command", NexCommand.Name)
+	log.Info("command executed", "command", NexCommand.Name)
 
 }
 

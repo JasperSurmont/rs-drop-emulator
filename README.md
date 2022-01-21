@@ -32,7 +32,7 @@ Every simulation (like a boss) has its own file in [simulations](./simulations) 
 4. Create a function with the name of the boss or other with the first letter capitalized. In this function use [simulatedrop.go](./simulations/simulatedrop.go) to handle all of the discord stuff. Pass as argument the function you created in step 3.
 5. Add the command in [main.go](./main.go)
 
-Interacting with the RS Api and cache (to get the GE Prices) is specified in [util]('./rsapi/rsapi). Because the RS API is very unstable and not really trustworthy, it's important that when any change happens, it is first tested using [rsapi_test]('./rsapi/rsapi_test.go).
+Interacting with the RS Api and cache (to get the GE Prices) is specified in [rsapi.go]('./rsapi/rsapi). Because the RS API is very unstable and not really trustworthy, it's important that when any change happens, it is first tested using [rsapi_test]('./rsapi/rsapi_test.go).
 
 In every package there's a logger available called `log` which is configured to work with the google cloud platform. Please use only that log. When creating a new package make sure to create one using `logger.CreateLogger(<package name>)`.
 

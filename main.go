@@ -30,6 +30,7 @@ var (
 		simulations.VoragoCommand,
 		HelpCommand,
 		ContributeCommand,
+		InviteCommand,
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		"giantmole":  simulations.GiantMole,
@@ -45,6 +46,7 @@ var (
 		"vorago":     simulations.Vorago,
 		"help":       Help,
 		"contribute": Contribute,
+		"invite":     Invite,
 	}
 	botToken string
 )

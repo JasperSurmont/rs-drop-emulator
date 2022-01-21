@@ -135,5 +135,4 @@ var KreearraCommand = &discordgo.ApplicationCommand{
 
 func Kreearra(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	simulateDrop(s, i, simulateDropGwd1, kreearraTables, kreearraUrl, KreearraCommand.Name, "Kree'arra")
-
 }

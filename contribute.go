@@ -11,8 +11,8 @@ func Contribute(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	log.Info("command executed", "command", ContributeCommand.Name)
 	embed := discordgo.MessageEmbed{
 		Title: "Contribute",
-		Description: `This bot is open source with the [GPL-3.0 License](https://github.com/JasperSurmont/rs-drop-emulator/blob/main/LICENSE) on [GitHub](https://github.com/JasperSurmont/rs-drop-emulator).
-			You can file an issue or suggest a feature [here](https://github.com/JasperSurmont/rs-drop-emulator/issues).
+		Description: `This bot is open source with the [GPL-3.0 License](https://github.com/JasperSurmont/rs-drop-simulator/blob/main/LICENSE) on [GitHub](https://github.com/JasperSurmont/rs-drop-simulator).
+			You can file an issue or suggest a feature [here](https://github.com/JasperSurmont/rs-drop-simulator/issues).
 			
 			Below is some extra info about me, the creator.`,
 		Fields: []*discordgo.MessageEmbedField{

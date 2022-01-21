@@ -27,6 +27,6 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/rs-drop-emulator:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/rs-drop-simulator:latest
 
       

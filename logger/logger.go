@@ -5,18 +5,19 @@ import (
 	"log"
 	"os"
 	"runtime"
+	"strings"
 
 	zd "github.com/blendle/zapdriver"
 	"go.uber.org/zap"
 )
 
 func CreateLogger(name string) LoggerWrapper {
-	env := os.Getenv("RS_DROP_EMULATOR_ENV")
+	env := os.Getenv("RS_DROP_simulator_ENV")
 
 	if env == "PROD" {
 		zl, err := zd.NewProductionWithCore(zd.WrapCore(
 			zd.ReportAllErrors(true),
-			zd.ServiceName("rs-drop-emulator"),
+			zd.ServiceName("rs-drop-simulator"),
 		))
 
 		if err != nil {
@@ -58,7 +59,9 @@ func wrapWithLabel(fields ...interface{}) []zap.Field {
 	for i := 0; i < len(fields)-1; i += 2 {
 		newValues = append(newValues, zd.Label(fmt.Sprint(fields[i]), fmt.Sprint(fields[i+1])))
 	}
-	newValues = append(newValues, zd.SourceLocation(runtime.Caller(2))) // Skip 2 cause there are 2 calls here
+	pc, file, line, ok := runtime.Caller(2) // Skip 2 cause there are 2 calls here
+	split := strings.Split(file, "/")       // We just want the package name, not also entire module
+	newValues = append(newValues, zd.SourceLocation(pc, split[len(split)-1], line, ok))
 	return newValues
 }
 

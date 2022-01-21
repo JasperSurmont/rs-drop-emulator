@@ -1,4 +1,4 @@
-# Runescape 3 Drop emulator
+# Runescape 3 Drop simulator
 
 A discord bot that simulates drops. 
 The goal is that the user can input a variety of variables that have an influence on the droprate

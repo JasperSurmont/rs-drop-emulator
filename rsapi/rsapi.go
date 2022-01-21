@@ -1,4 +1,4 @@
-package main
+package rsapi
 
 import (
 	"encoding/json"
@@ -77,7 +77,7 @@ func GetItemPriceById(id int) (price RSPrice, err error) {
 	item, ok := itemCache[id]
 	itemCacheMutex.RUnlock()
 	if ok {
-		if then, err2 := time.Parse(time.UnixDate, item.LastUpdated); err == nil && DateEqual(then, time.Now()) {
+		if then, err2 := time.Parse(time.UnixDate, item.LastUpdated); err == nil && dateEqual(then, time.Now()) {
 			price = item.Price
 			return
 		} else {

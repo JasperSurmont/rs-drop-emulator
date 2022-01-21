@@ -6,7 +6,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/jaspersurmont/rs-drop-emulator/logger"
+	"github.com/jaspersurmont/rs-drop-simulator/logger"
+	"github.com/jaspersurmont/rs-drop-simulator/simulations"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
@@ -16,32 +17,32 @@ var (
 	log      logger.LoggerWrapper
 	discord  *discordgo.Session
 	commands = []*discordgo.ApplicationCommand{
-		GiantMoleCommand,
-		ZilyanaCommand,
-		GraardorCommand,
-		KreearraCommand,
-		KrilCommand,
-		NexCommand,
-		VindictaCommand,
-		HelwyrCommand,
-		TwinfuriesCommand,
-		GregorovicCommand,
-		VoragoCommand,
+		simulations.GiantMoleCommand,
+		simulations.ZilyanaCommand,
+		simulations.GraardorCommand,
+		simulations.KreearraCommand,
+		simulations.KrilCommand,
+		simulations.NexCommand,
+		simulations.VindictaCommand,
+		simulations.HelwyrCommand,
+		simulations.TwinfuriesCommand,
+		simulations.GregorovicCommand,
+		simulations.VoragoCommand,
 		HelpCommand,
 		ContributeCommand,
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		"giantmole":  GiantMole,
-		"graardor":   Graardor,
-		"zilyana":    Zilyana,
-		"kreearra":   Kreearra,
-		"kril":       Kril,
-		"nex":        Nex,
-		"vindicta":   Vindicta,
-		"helwyr":     Helwyr,
-		"twinfuries": Twinfuries,
-		"gregorovic": Gregorovic,
-		"vorago":     Vorago,
+		"giantmole":  simulations.GiantMole,
+		"graardor":   simulations.Graardor,
+		"zilyana":    simulations.Zilyana,
+		"kreearra":   simulations.Kreearra,
+		"kril":       simulations.Kril,
+		"nex":        simulations.Nex,
+		"vindicta":   simulations.Vindicta,
+		"helwyr":     simulations.Helwyr,
+		"twinfuries": simulations.Twinfuries,
+		"gregorovic": simulations.Gregorovic,
+		"vorago":     simulations.Vorago,
 		"help":       Help,
 		"contribute": Contribute,
 	}
@@ -82,7 +83,7 @@ func startBot() {
 	}
 
 	// Use guild only commands when testing, to propagate changes faster
-	env := os.Getenv("RS_DROP_EMULATOR_ENV")
+	env := os.Getenv("RS_DROP_simulator_ENV")
 	guildId := "512644466281152526"
 	if env == "PROD" {
 		guildId = ""

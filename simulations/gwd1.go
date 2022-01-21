@@ -1,6 +1,10 @@
-package main
+package simulations
 
-import "math/rand"
+import (
+	"math/rand"
+
+	"github.com/bwmarrin/discordgo"
+)
 
 var (
 	godswordShards = []Drop{
@@ -19,12 +23,13 @@ var (
 	}
 )
 
-func emulateDropGwd1(amount int64, rareDroptable []Drop, uncommonDroptable []Drop, commonDroptable []Drop, hilt Drop) map[string]*Drop {
+func simulateDropGwd1(amount int64, tables dropTables, i *discordgo.InteractionCreate) map[string]*Drop {
 	var drops map[string]*Drop = make(map[string]*Drop)
+	hilt := tables.extra.(Drop)
 
 	for i := int64(0); i < amount; i++ {
 		var sum float64 = 0
-		for _, d := range rareDroptable {
+		for _, d := range tables.uniqueDroptable {
 			sum += d.Rate
 		}
 
@@ -35,7 +40,7 @@ func emulateDropGwd1(amount int64, rareDroptable []Drop, uncommonDroptable []Dro
 		// We split up the interval: [0, sum) = rare, [sum, sum+1/128) = Hilt chance, [sum+1/128,sum+1/128+1/128) = Shard chance,
 		// [sum+1/128+1/128, sum+1/128+1/128+uncommonrate) = uncommon, [sum+1/128+1/128+uncommonrate,1) = common
 		if roll < sum {
-			drop = determineDropWithRates(rand.Float64(), &rareDroptable)
+			drop = determineDropWithRates(rand.Float64(), tables.uniqueDroptable)
 		} else if roll < sum+1.0/128.0 { // Hilt chance
 			if rand.Float64() < 1.0/4.0 {
 				drop = hilt
@@ -55,17 +60,17 @@ func emulateDropGwd1(amount int64, rareDroptable []Drop, uncommonDroptable []Dro
 				}
 			}
 		} else if roll < sum+1.0/128.0+1.0/128.0+UncommonRateWithoutRare {
-			drop = uncommonDroptable[rand.Intn(len(uncommonDroptable))]
+			drop = tables.uncommonDroptable[rand.Intn(len(tables.uncommonDroptable))]
 		} else {
-			drop = commonDroptable[rand.Intn(len(commonDroptable))]
+			drop = tables.commonDroptable[rand.Intn(len(tables.commonDroptable))]
 		}
 
-		drop.SetAmount()
+		drop.setAmount()
 		addDropValueToMap(drops, &drop)
 
 		// Add drops that always go together
 		for _, d := range drop.OtherDrops {
-			d.SetAmount()
+			d.setAmount()
 			addDropValueToMap(drops, &d)
 		}
 	}

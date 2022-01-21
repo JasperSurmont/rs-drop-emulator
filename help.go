@@ -22,7 +22,7 @@ func Help(s *discordgo.Session, i *discordgo.InteractionCreate) {
 			},
 			{
 				Name: "How representative is it?",
-				Value: `All the information is taken from the [wiki](rs.wiki). This, together with the fact that especially the common / uncommon drop rates are not precisely known, makes this emulator not 100% representative.
+				Value: `All the information is taken from the [wiki](rs.wiki). This, together with the fact that especially the common / uncommon drop rates are not precisely known, makes this simulator not 100% representative.
 					For example: In the drop tables we often just see **common** or **uncommon**. In this example we take the ratio of common to uncommon to be 2 / 3, which might differ from the actual game.`,
 			},
 			{

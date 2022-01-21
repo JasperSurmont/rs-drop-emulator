@@ -150,10 +150,10 @@ func (p1 *RSPrice) Add(p2 RSPrice) error {
 	return nil
 }
 
-func (p *RSPrice) unmarshalJSON(b []byte) error {
+func (p *RSPrice) UnmarshalJSON(b []byte) error {
 	var s string
 
-	// We don't know if they return a string (everything above 9999gp) or an int (under 10k)
+	// We don't know if they return a string (everything above 9999gp) or an int (under 10k) [Jagex please fix API]
 	if err := json.Unmarshal(b, &s); err != nil {
 		var i int
 		if err2 := json.Unmarshal(b, &i); err2 != nil {

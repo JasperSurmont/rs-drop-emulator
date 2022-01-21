@@ -31,7 +31,7 @@ func CreateLogger(name string) LoggerWrapper {
 		}
 	}
 
-	zl, _ := zap.NewDevelopment()
+	zl, _ := zap.NewDevelopment(zap.AddCallerSkip(1))
 	return &wrappedLogger{
 		base:    zl,
 		sugared: zl.Sugar().Named(name),
@@ -67,7 +67,11 @@ func wrapWithLabel(fields ...interface{}) []zap.Field {
 
 func (l wrappedLogger) Info(msg string, fields ...interface{}) {
 	if l.dev {
-		l.sugared.Info(msg, fields)
+		if len(fields) > 0 {
+			l.sugared.Infow(msg, fields...)
+		} else {
+			l.sugared.Info(msg)
+		}
 	} else {
 		l.base.Info(msg, wrapWithLabel(fields...)...)
 	}
@@ -75,7 +79,11 @@ func (l wrappedLogger) Info(msg string, fields ...interface{}) {
 
 func (l wrappedLogger) Warn(msg string, fields ...interface{}) {
 	if l.dev {
-		l.sugared.Warnw(msg, fields)
+		if len(fields) > 0 {
+			l.sugared.Warnw(msg, fields...)
+		} else {
+			l.sugared.Warn(msg)
+		}
 	} else {
 		l.base.Warn(msg, wrapWithLabel(fields...)...)
 	}
@@ -83,7 +91,11 @@ func (l wrappedLogger) Warn(msg string, fields ...interface{}) {
 
 func (l wrappedLogger) Debug(msg string, fields ...interface{}) {
 	if l.dev {
-		l.sugared.Debugw(msg, fields)
+		if len(fields) > 0 {
+			l.sugared.Debugw(msg, fields...)
+		} else {
+			l.sugared.Debug(msg)
+		}
 	} else {
 		l.base.Debug(msg, wrapWithLabel(fields...)...)
 	}
@@ -91,7 +103,11 @@ func (l wrappedLogger) Debug(msg string, fields ...interface{}) {
 
 func (l wrappedLogger) Error(msg string, fields ...interface{}) {
 	if l.dev {
-		l.sugared.Error(msg, fields)
+		if len(fields) > 0 {
+			l.sugared.Errorw(msg, fields...)
+		} else {
+			l.sugared.Error(msg)
+		}
 	} else {
 		l.base.Error(msg, wrapWithLabel(fields...)...)
 	}
@@ -99,7 +115,11 @@ func (l wrappedLogger) Error(msg string, fields ...interface{}) {
 
 func (l wrappedLogger) Fatal(msg string, fields ...interface{}) {
 	if l.dev {
-		l.sugared.Fatal(msg, fields)
+		if len(fields) > 0 {
+			l.sugared.Fatalw(msg, fields...)
+		} else {
+			l.sugared.Fatal(msg)
+		}
 	} else {
 		l.base.Fatal(msg, wrapWithLabel(fields...)...)
 	}

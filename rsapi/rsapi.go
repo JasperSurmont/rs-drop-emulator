@@ -12,8 +12,6 @@ import (
 	"time"
 
 	_ "embed"
-
-	zd "github.com/blendle/zapdriver"
 )
 
 const DETAIL_URL = "https://services.runescape.com/m=itemdb_rs/api/catalogue/detail.json?item="
@@ -82,9 +80,9 @@ func GetItemPriceById(id int) (price RSPrice, err error) {
 			return
 		} else {
 			log.Error("couldn't parse time from cache",
-				zd.Label("id", fmt.Sprint(id)),
-				zd.Label("time", item.LastUpdated),
-				zd.Label("err", err2.Error()),
+				"id", fmt.Sprint(id),
+				"time", item.LastUpdated,
+				"err", err2.Error(),
 			)
 		}
 	}
@@ -92,8 +90,8 @@ func GetItemPriceById(id int) (price RSPrice, err error) {
 	res, err := http.Get(DETAIL_URL + strconv.Itoa(id))
 	if err != nil {
 		log.Error("request failed in GetItemPriceById",
-			zd.Label("id", fmt.Sprint(id)),
-			zd.Label("err", err.Error()),
+			"id", fmt.Sprint(id),
+			"err", err.Error(),
 		)
 		return
 	}
@@ -101,16 +99,16 @@ func GetItemPriceById(id int) (price RSPrice, err error) {
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		log.Error("could not read body in GetItemPriceById",
-			zd.Label("id", fmt.Sprint(id)),
-			zd.Label("err", err.Error()),
+			"id", fmt.Sprint(id),
+			"err", err.Error(),
 		)
 		return
 	}
 
 	if res.StatusCode > 299 {
 		log.Error("invalid response in GetItemPriceById",
-			zd.Label("id", fmt.Sprint(id)),
-			zd.Label("statusCode", fmt.Sprint(res.StatusCode)),
+			"id", fmt.Sprint(id),
+			"statusCode", fmt.Sprint(res.StatusCode),
 		)
 		err = errors.New("invalid response in GetItemPriceById")
 		return
@@ -119,8 +117,8 @@ func GetItemPriceById(id int) (price RSPrice, err error) {
 	var detail DetailResponse
 	if err := json.Unmarshal(body, &detail); err != nil {
 		log.Error("couldn't unmarshal json to DetailResponse in GetItemPriceById",
-			zd.Label("id", fmt.Sprint(id)),
-			zd.Label("error", err.Error()),
+			"id", fmt.Sprint(id),
+			"error", err.Error(),
 		)
 	}
 	price = detail.Item.Current.Price

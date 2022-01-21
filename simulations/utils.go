@@ -14,7 +14,7 @@ import (
 
 const (
 	UncommonRateWithoutRare float64 = 1.0 / 3.0
-	MAX_AMOUNT_ROLLS                = 500
+	MAX_AMOUNT_ROLLS                = 1000
 )
 
 var log logger.LoggerWrapper

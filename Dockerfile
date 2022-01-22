@@ -3,15 +3,11 @@ FROM golang:1.17-alpine
 
 WORKDIR /app
 
-
-ENV RS_DROP_simulator_ENV=PROD
-
-COPY go.mod ./
-COPY go.sum ./
-
-RUN go mod download
+ENV RS_DROP_SIMULATOR_ENV=PROD
 
 COPY . ./
+
+RUN go mod download
 
 RUN go build -o /rs-drop-simulator 
 

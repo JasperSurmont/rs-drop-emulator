@@ -14,9 +14,11 @@ import (
 )
 
 var (
-	log      logger.LoggerWrapper
-	discord  *discordgo.Session
-	commands = []*discordgo.ApplicationCommand{
+	log          logger.LoggerWrapper
+	discord      *discordgo.Session
+	amountGuilds = 0
+	fullyStarted bool
+	commands     = []*discordgo.ApplicationCommand{
 		simulations.GiantMoleCommand,
 		simulations.ZilyanaCommand,
 		simulations.GraardorCommand,
@@ -68,6 +70,28 @@ func init() {
 			h(s, i)
 		}
 	})
+
+	discord.AddHandler(func(s *discordgo.Session, i *discordgo.GuildCreate) {
+		if !fullyStarted {
+			return
+		}
+		amountGuilds++
+		log.Info(fmt.Sprintf("bot joined guild; new amount: %v", amountGuilds),
+			"guildName", i.Guild.Name,
+			"amountGuilds", amountGuilds,
+		)
+	})
+
+	discord.AddHandler(func(s *discordgo.Session, i *discordgo.GuildDelete) {
+		if !fullyStarted {
+			return
+		}
+		amountGuilds--
+		log.Info(fmt.Sprintf("bot left guild; new amount: %v", amountGuilds),
+			"guildName", i.Guild.Name,
+			"amountGuilds", amountGuilds,
+		)
+	})
 }
 
 func main() {
@@ -85,26 +109,46 @@ func startBot() {
 	}
 
 	// Use guild only commands when testing, to propagate changes faster
-	env := os.Getenv("RS_DROP_simulator_ENV")
+	env := os.Getenv("RS_DROP_SIMULATOR_ENV")
 	guildId := "512644466281152526"
 	if env == "PROD" {
 		guildId = ""
 	}
 
-	for _, v := range commands {
-		_, err := discord.ApplicationCommandCreate(discord.State.User.ID, guildId, v)
-		if err != nil {
-			log.Fatal(fmt.Sprintf("cannot create '%v' command: %v", v.Name, err))
-		}
+	ch := make(chan bool, 50)
+
+	for _, c := range commands {
+		go func(c *discordgo.ApplicationCommand, guildId string, ch chan<- bool) {
+			_, err := discord.ApplicationCommandCreate(discord.State.User.ID, guildId, c)
+			if err != nil {
+				log.Error(fmt.Sprintf("can't add application command %v", c.Name),
+					"err", err,
+				)
+				ch <- false
+			} else {
+				log.Debug("added application command", "name", c.Name)
+				ch <- true
+			}
+		}(c, guildId, ch)
 	}
 
-	log.Info("Bot succesfully started up and listening")
+	// Wait for all the commands to be created (or failed)
+	for range commands {
+		<-ch
+	}
+
+	amountGuilds = len(discord.State.Guilds)
+
+	log.Info("Bot succesfully started up and listening",
+		"amountGuilds", amountGuilds,
+	)
+	fullyStarted = true
 
 	// Await termination
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, os.Interrupt, syscall.SIGTERM)
 	s := <-sc
 
-	log.Info(fmt.Sprintf("shutting down because with signal %v", s))
+	log.Info(fmt.Sprintf("shutting down with signal %v", s))
 	discord.Close()
 }

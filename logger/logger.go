@@ -11,7 +11,7 @@ import (
 )
 
 func CreateLogger(name string) LoggerWrapper {
-	env := os.Getenv("RS_DROP_simulator_ENV")
+	env := os.Getenv("RS_DROP_SIMULATOR_ENV")
 
 	if env == "PROD" {
 		zl, err := zd.NewProductionWithCore(zd.WrapCore(

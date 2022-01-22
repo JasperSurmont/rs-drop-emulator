@@ -88,7 +88,6 @@ func init() {
 		}
 		amountGuilds--
 		log.Info(fmt.Sprintf("bot left guild; new amount: %v", amountGuilds),
-			"guildName", i.Guild.Name,
 			"amountGuilds", amountGuilds,
 		)
 	})

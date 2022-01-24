@@ -241,14 +241,14 @@ func simulateDropNex(amount int64, tables dropTables, i *discordgo.InteractionCr
 		}
 
 		drop.setAmount()
-		addDropValueToMap(drops, &drop)
+		addDropValueToMap(drops, drop)
 
 		// Add drops that always go together
 		for _, d := range drop.OtherDrops {
 			d.setAmount()
-			addDropValueToMap(drops, &d)
+			addDropValueToMap(drops, d)
 		}
 	}
-	addGuarantees(amount, &drops, tables.alwaysDroptable, i)
+	addGuarantees(amount, drops, tables.alwaysDroptable, i)
 	return drops
 }

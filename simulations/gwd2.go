@@ -30,8 +30,8 @@ func simulateDropGwd2(amount int64, tables dropTables, i *discordgo.InteractionC
 		}
 
 		drop.setAmount()
-		addDropValueToMap(drops, &drop)
+		addDropValueToMap(drops, drop)
 	}
-	addGuarantees(amount, &drops, tables.alwaysDroptable, i)
+	addGuarantees(amount, drops, tables.alwaysDroptable, i)
 	return drops
 }

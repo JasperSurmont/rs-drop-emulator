@@ -66,12 +66,12 @@ func simulateDropGwd1(amount int64, tables dropTables, i *discordgo.InteractionC
 		}
 
 		drop.setAmount()
-		addDropValueToMap(drops, &drop)
+		addDropValueToMap(drops, drop)
 
 		// Add drops that always go together
 		for _, d := range drop.OtherDrops {
 			d.setAmount()
-			addDropValueToMap(drops, &d)
+			addDropValueToMap(drops, d)
 		}
 	}
 	return drops

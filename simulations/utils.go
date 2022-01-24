@@ -32,6 +32,7 @@ type Drop struct {
 	Amount      int
 	Amounts     []int  // If there are only certain specified amounts
 	OtherDrops  []Drop // Other drops that always go with this drop
+	SameAmount  bool   // Only applicable to a drop in OtherDrops: whether this drop should get the same amount as the other one
 	Bold        bool   // Whether the drop should be put in bold or not
 }
 
@@ -108,17 +109,17 @@ func sortDrops(m *[]rsapi.NamedRSPrice) {
 }
 
 // Add the drops that should always be dropped to the drops map
-func addGuarantees(amount int64, drops *map[string]*Drop, alwaysDroptable []Drop, i *discordgo.InteractionCreate) {
+func addGuarantees(amount int64, drops map[string]*Drop, alwaysDroptable []Drop, i *discordgo.InteractionCreate) {
 	if enableGuarantees := getOptionWithName(i.ApplicationCommandData().Options, "enable-guarantees"); enableGuarantees.Name == "" || enableGuarantees.BoolValue() {
 		for _, d := range alwaysDroptable {
 			add := d // Add copy, otherwise it adjusts original value
-			_, ok := (*drops)[add.Name]
+			_, ok := drops[add.Name]
 			add.setAmount()
 			if ok {
-				(*drops)[add.Name].Amount += add.Amount * int(amount)
+				drops[add.Name].Amount += add.Amount * int(amount)
 			} else {
 				add.Amount *= int(amount)
-				(*drops)[add.Name] = &add
+				drops[add.Name] = &add
 			}
 		}
 	}
@@ -142,13 +143,13 @@ func makeDropList(n []rsapi.NamedRSPrice, m map[string]*Drop, total rsapi.RSPric
 	return sb.String()
 }
 
-func addDropValueToMap(m map[string]*Drop, d *Drop) {
+func addDropValueToMap(m map[string]*Drop, d Drop) {
 	_, ok := m[d.Name]
 
 	if ok {
 		m[d.Name].Amount += d.Amount
 	} else {
-		m[d.Name] = d
+		m[d.Name] = &d
 	}
 }
 

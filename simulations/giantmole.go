@@ -171,7 +171,7 @@ func simulateDropGiantMole(amount int64, tables dropTables, i *discordgo.Interac
 		}
 
 		drop.setAmount()
-		addDropValueToMap(drops, &drop)
+		addDropValueToMap(drops, drop)
 
 		// We roll for tertiary drop
 		roll = rand.Float64()
@@ -183,7 +183,7 @@ func simulateDropGiantMole(amount int64, tables dropTables, i *discordgo.Interac
 				curr += d.Rate
 				if roll < curr {
 					d.setAmount()
-					addDropValueToMap(drops, &d)
+					addDropValueToMap(drops, d)
 					break
 				}
 			}
@@ -192,9 +192,9 @@ func simulateDropGiantMole(amount int64, tables dropTables, i *discordgo.Interac
 
 	// Adjust always table if faladorshield option is present and it's false
 	if faladorshield4 := getOptionWithName(i.ApplicationCommandData().Options, "faladorshield-4"); faladorshield4.Name != "" && !faladorshield4.BoolValue() {
-		addGuarantees(amount, &drops, removeDropFromTable(tables.alwaysDroptable, len(tables.alwaysDroptable)-1), i)
+		addGuarantees(amount, drops, removeDropFromTable(tables.alwaysDroptable, len(tables.alwaysDroptable)-1), i)
 	} else {
-		addGuarantees(amount, &drops, tables.alwaysDroptable, i)
+		addGuarantees(amount, drops, tables.alwaysDroptable, i)
 	}
 
 	return drops

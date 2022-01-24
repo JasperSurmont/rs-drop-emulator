@@ -127,7 +127,7 @@ func simulateDropVorago(amount int64, tables dropTables, i *discordgo.Interactio
 			if roll < energy.Rate {
 				// Make a copy so that we don't adjust the previous one
 				energy.setAmount()
-				addDropValueToMap(drops, &energy)
+				addDropValueToMap(drops, energy)
 			}
 
 			roll = rand.Float64()
@@ -140,7 +140,7 @@ func simulateDropVorago(amount int64, tables dropTables, i *discordgo.Interactio
 			}
 
 			drop.setAmount()
-			addDropValueToMap(drops, &drop)
+			addDropValueToMap(drops, drop)
 		}
 
 	}

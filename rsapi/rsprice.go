@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"regexp"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/jaspersurmont/rs-drop-simulator/logger"
@@ -162,7 +162,8 @@ func (p *RSPrice) UnmarshalJSON(b []byte) error {
 		*p = RSPrice(fmt.Sprintf("%v", i))
 		return nil
 	}
-	*p = RSPrice(strings.Replace(s, ",", "", -1))
+	reg := regexp.MustCompile("[, ]")
+	*p = RSPrice(reg.ReplaceAllString(s, "")) // Replace the spaces and , from the price
 	return nil
 }
 
